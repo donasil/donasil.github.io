@@ -58,6 +58,20 @@ button{font:inherit;color:inherit}
 .filter[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:#fff}
 
 .note{padding:16px 24px 2px;font:700 23px Caveat,cursive;color:var(--rose)}
+
+/* Páginas (Bolos / Tortas / Doces) com deslizar do dedo */
+.pager{overflow:hidden;overflow:clip}
+#panel{touch-action:pan-y;will-change:transform}
+.hint{display:none;align-items:center;justify-content:center;gap:8px;margin:0 20px;padding:10px 0 0;font:600 12px Figtree,sans-serif;color:var(--muted);letter-spacing:.02em}
+.hint svg{width:34px;height:14px;flex:none;color:var(--rose);animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+@media (hover:none){.hint{display:flex}}
+.hint.gone{display:none}
+.pnav{display:flex;gap:10px;padding:4px 20px 0}
+.pnav button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:48px;border:1.5px solid var(--chip);border-radius:999px;background:var(--card);font:600 15px Figtree,sans-serif;color:var(--ink);cursor:pointer}
+.pnav button.next{color:var(--rose);border-color:var(--rose)}
+.pnav svg{width:18px;height:18px;flex:none}
+@media (prefers-reduced-motion:reduce){.hint svg{animation:none}}
 .list{list-style:none;margin:0;padding:0 20px 20px}
 
 /* Itens */
@@ -83,7 +97,6 @@ button{font:inherit;color:inherit}
 .hero .kicker{margin:0;font:700 22px/1 Caveat,cursive;color:var(--rose)}
 .hero .name{font-size:30px;margin-top:2px}
 .hero .spec{font-size:15px;margin-top:10px;position:relative;z-index:1}
-.hero .pick{margin-top:16px;position:relative;z-index:1}
 
 /* Novidades */
 .item.card{background:var(--card);border:1.5px solid #F1E2D6;border-radius:18px;padding:14px 12px 14px 14px;margin-bottom:10px;box-shadow:0 4px 14px rgba(58,40,36,.06)}
@@ -93,30 +106,18 @@ button{font:inherit;color:inherit}
 .group::before,.group::after{content:"";flex:1;height:1px;background:var(--line)}
 
 /* Tortas e doces: lista mais enxuta, pra deixar o protagonismo com os bolos */
-.list.compact .item{padding:12px 4px;align-items:center}
+.list.compact .item{padding:14px 4px}
 .list.compact .name{font-size:17px}
-.list.compact .pick{width:36px;height:36px}
 
-.pick{flex:none;width:40px;height:40px;border-radius:50%;border:1.5px solid var(--chip);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--rose);transition:background .15s,border-color .15s}
-.pick svg{width:18px;height:18px;flex:none}
-.pick[aria-pressed="true"]{background:var(--rose);border-color:var(--rose);color:#fff}
-.pick[aria-pressed="true"] .off,.pick:not([aria-pressed="true"]) .on{display:none}
-.pick.big{width:auto;height:46px;padding:0 20px;border-radius:999px;font:700 15px Figtree,sans-serif;border-color:var(--rose)}
-.pick.big span{display:flex;align-items:center;gap:8px}
 
 .empty{padding:24px;text-align:center;color:var(--muted);font-size:14px}
 
 /* Rodapé */
-.thanks{padding:28px 24px 150px;text-align:center;font:700 27px Caveat,cursive;color:var(--rose)}
+.thanks{padding:28px 24px 110px;text-align:center;font:700 27px Caveat,cursive;color:var(--rose)}
 
 /* Barra de pedido */
 .cta{position:fixed;left:0;right:0;bottom:0;z-index:4;display:flex;justify-content:center;padding:14px 16px 18px;background:linear-gradient(rgba(251,246,240,0),var(--bg) 30%)}
-.cta-inner{width:100%;max-width:448px;display:flex;flex-direction:column;gap:8px}
-.picked{display:none;align-items:center;gap:8px;padding:8px 8px 8px 14px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;font-size:13px;color:var(--muted);box-shadow:0 4px 14px rgba(58,40,36,.08)}
-.picked.show{display:flex}
-.picked span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.picked b{color:var(--ink)}
-.picked button{flex:none;border:0;background:none;color:var(--rose);font:600 13px Figtree,sans-serif;cursor:pointer;padding:6px 8px}
+.cta-inner{width:100%;max-width:448px}
 .wa{height:56px;border-radius:999px;background:var(--rose);color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;font:700 16px Figtree,sans-serif;text-decoration:none;box-shadow:0 8px 20px rgba(179,71,95,.35)}
 .wa:hover{background:var(--rose-dark);color:#fff}
 .wa svg{width:22px;height:22px}
@@ -188,13 +189,20 @@ button{font:inherit;color:inherit}
     </nav>
   </header>
 
-  <p class="intro">Toque no <b>+</b> dos sabores que você gostar e me chame no WhatsApp. O valor eu passo por lá, meu bem!</p>
+  <p class="intro">Conheça meus sabores e me chame no WhatsApp para encomendar. O valor eu passo por lá, meu bem!</p>
 
   <div class="tabs" role="tablist" aria-label="Categorias" id="tabs"></div>
-  <div id="panel" role="tabpanel" aria-labelledby="">
-    <div class="filters" id="filters" role="group" aria-label="Filtrar bolos"></div>
-    <div class="note" id="note"></div>
-    <ul class="list" id="list"></ul>
+  <div class="hint" id="hint" aria-hidden="true">
+    <svg viewBox="0 0 34 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2L2 7l5 5M27 2l5 5-5 5M2 7h30"/></svg>
+    deslize para o lado para trocar de página
+  </div>
+  <div class="pager">
+    <div id="panel" role="tabpanel" aria-labelledby="">
+      <div class="filters" id="filters" role="group" aria-label="Filtrar bolos"></div>
+      <div class="note" id="note"></div>
+      <ul class="list" id="list"></ul>
+      <nav class="pnav" id="pnav" aria-label="Outras páginas"></nav>
+    </div>
   </div>
 
   <div class="thanks">Obrigada pela preferência! — Sil</div>
@@ -202,13 +210,9 @@ button{font:inherit;color:inherit}
 
 <div class="cta">
   <div class="cta-inner">
-    <div class="picked" id="picked" aria-live="polite">
-      <span id="pickedText"></span>
-      <button type="button" id="clear">Limpar</button>
-    </div>
-    <a class="wa" id="wa" target="_blank" rel="noopener" href="#">
+    <a class="wa" id="wa" target="_blank" rel="noopener" href="https://wa.me/5511995233302?text=Oi%20Dona%20Sil!%20Vi%20o%20card%C3%A1pio%20e%20queria%20fazer%20uma%20encomenda.">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
-      <span id="waText">Chamar no WhatsApp</span>
+      <span>Chamar no WhatsApp</span>
     </a>
   </div>
 </div>
@@ -254,17 +258,13 @@ const FILTERS = [
   { id: 'Chocolate', label: 'Massa de chocolate' },
   { id: 'Especial', label: 'Massas especiais' }
 ];
-const PHONE = '5511995233302';
-
-const state = { tab: 'bolos', filter: 'todos', picked: [] };
+const state = { tab: 'bolos', filter: 'todos' };
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
-const keyOf = (cat, it) => cat.id + ':' + it.n;
-const labelOf = (cat, it) => (cat.id === 'bolos' ? 'Bolo ' : cat.id === 'tortas' ? 'Torta de ' : '') + it.n;
 
 const CAKE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V13a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8M2 21h20M4 16c1.3 0 2-1 4-1s2.7 1 4 1 2-1 4-1 2.7 1 4 1M12 11V7"/><path d="M12 7c-1-1-1-2.3 0-4 1 1.7 1 3 0 4z" fill="currentColor"/></svg>';
-const PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
-const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const ARROW_L = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
+const ARROW_R = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
 // Selo dourado de novidade, no mesmo formato do cardápio do Canva
 const SEAL_NEW = '<svg class="seal" viewBox="0 0 100 100" role="img" aria-label="Novidade"><use href="#scallop" fill="url(#gGold)"/><ellipse cx="36" cy="27" rx="16" ry="6" fill="#fff" opacity=".22" transform="rotate(-30 38 30)"/><circle cx="50" cy="50" r="31" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1.8" stroke-dasharray="3.2 3.2"/><text x="50" y="56.5" text-anchor="middle">NOVO</text></svg>';
 // Roseta + fita do bolo assinatura
@@ -314,14 +314,10 @@ function renderList() {
     html += itemHtml(cat, it);
   });
   $('list').innerHTML = html || '<li class="empty">Nenhum bolo nesse filtro.</li>';
-}
-
-function pickBtn(cat, it, big) {
-  const key = keyOf(cat, it);
-  const on = state.picked.some(p => p.key === key);
-  const label = esc(labelOf(cat, it));
-  const inner = big ? `<span class="off">${PLUS}Quero esse</span><span class="on">${CHECK}Escolhido</span>` : `<span class="off">${PLUS}</span><span class="on">${CHECK}</span>`;
-  return `<button class="pick${big ? ' big' : ''}" type="button" aria-pressed="${on}" aria-label="${on ? 'Remover' : 'Escolher'} ${label}" data-key="${esc(key)}" data-label="${label}">${inner}</button>`;
+  // Botões no fim da página para ir à anterior / próxima
+  const i = MENU.indexOf(cat), prevCat = MENU[i - 1], nextCat = MENU[i + 1];
+  $('pnav').innerHTML = (prevCat ? `<button type="button" data-go="${i - 1}">${ARROW_L}${prevCat.name}</button>` : '')
+    + (nextCat ? `<button type="button" class="next" data-go="${i + 1}">Ver ${nextCat.name}${ARROW_R}</button>` : '');
 }
 
 function itemHtml(cat, it) {
@@ -330,51 +326,106 @@ function itemHtml(cat, it) {
       ${RIBBON_SIG}
       <p class="kicker">o bolo que leva o meu nome</p>
       <h3 class="name">${esc(it.n)}</h3>${spec(it)}
-      ${pickBtn(cat, it, true)}
     </li>`;
   }
   return `<li class="item${it.tag === 'new' ? ' card' : ''}">
       <div class="body"><div class="title">${it.tag === 'new' ? SEAL_NEW : ''}<h3 class="name">${esc(it.n)}</h3></div>${spec(it)}</div>
-      ${pickBtn(cat, it, false)}
     </li>`;
 }
 
-function renderCta() {
-  const n = state.picked.length;
-  const names = state.picked.map(p => p.label);
-  $('picked').classList.toggle('show', n > 0);
-  $('pickedText').innerHTML = n ? `<b>${n} ${n === 1 ? 'sabor' : 'sabores'}:</b> ${esc(names.join(', '))}` : '';
-  $('waText').textContent = n ? 'Encomendar no WhatsApp' : 'Chamar no WhatsApp';
-  const msg = n
-    ? 'Oi Dona Sil! Vi o cardápio e queria encomendar:\n' + names.map(s => '• ' + s).join('\n')
-    : 'Oi Dona Sil! Vi o cardápio e queria fazer uma encomenda.';
-  $('wa').href = 'https://wa.me/' + PHONE + '?text=' + encodeURIComponent(msg);
+function render() { renderTabs(); renderFilters(); renderList(); }
+
+// ---- Troca de página (abas, botões e deslizar do dedo) ----
+const panel = $('panel');
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const tabIndex = () => MENU.findIndex(c => c.id === state.tab);
+let busy = false;
+
+// Se a pessoa já desceu a página, a nova página começa logo abaixo das abas
+function toPanelTop() {
+  const top = panel.getBoundingClientRect().top + scrollY - $('tabs').offsetHeight;
+  if (scrollY > top) scrollTo(0, top);
 }
 
-function render() { renderTabs(); renderFilters(); renderList(); renderCta(); }
+function show(i) {
+  state.tab = MENU[i].id; state.filter = 'todos'; render(); $('filters').scrollLeft = 0; toPanelTop();
+}
+
+function slide(to, css) {
+  panel.style.transition = css;
+  panel.style.transform = to ? `translateX(${to})` : '';
+  panel.style.opacity = to ? '0' : '';
+}
+
+// dir: 1 = próxima página (entra pela direita), -1 = anterior
+function goTo(i, dir) {
+  const cur = tabIndex();
+  if (busy || i === cur || i < 0 || i >= MENU.length) { slide('', 'transform .25s ease, opacity .25s'); return; }
+  dir = dir || (i > cur ? 1 : -1);
+  if (reduceMotion.matches) { slide('', 'none'); show(i); return; }
+  busy = true;
+  slide(`${-dir * 100}%`, 'transform .2s ease-in, opacity .2s ease-in');
+  setTimeout(() => {
+    show(i);
+    slide(`${dir * 35}%`, 'none');
+    panel.getBoundingClientRect();
+    slide('', 'transform .3s cubic-bezier(.2,.8,.2,1), opacity .3s');
+    setTimeout(() => { busy = false; }, 300);
+  }, 200);
+}
+
+let drag = null;
+panel.addEventListener('touchstart', e => {
+  if (busy || e.touches.length > 1 || e.target.closest('.filters')) { drag = null; return; }
+  const t = e.touches[0];
+  drag = { x: t.clientX, y: t.clientY, t: Date.now(), dx: 0, axis: null };
+}, { passive: true });
+panel.addEventListener('touchmove', e => {
+  if (!drag) return;
+  const t = e.touches[0], dx = t.clientX - drag.x, dy = t.clientY - drag.y;
+  if (!drag.axis) {
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+    drag.axis = Math.abs(dx) > Math.abs(dy) * 1.2 ? 'x' : 'y';
+  }
+  if (drag.axis !== 'x') return;
+  const i = tabIndex(), edge = (dx > 0 && i === 0) || (dx < 0 && i === MENU.length - 1);
+  drag.dx = edge ? dx * 0.25 : dx;
+  panel.style.transition = 'none';
+  panel.style.transform = `translateX(${drag.dx}px)`;
+  panel.style.opacity = String(1 - Math.min(Math.abs(drag.dx) / panel.offsetWidth, 1) * 0.5);
+}, { passive: true });
+function endDrag() {
+  if (!drag || drag.axis !== 'x') { drag = null; return; }
+  const { dx, t } = drag; drag = null;
+  const fast = Math.abs(dx) / (Date.now() - t) > 0.45 && Math.abs(dx) > 30;
+  if (Math.abs(dx) > panel.offsetWidth * 0.22 || fast) {
+    const dir = dx < 0 ? 1 : -1;
+    goTo(tabIndex() + dir, dir);
+    $('hint').classList.add('gone');
+  } else {
+    slide('', 'transform .25s ease, opacity .25s');
+  }
+}
+panel.addEventListener('touchend', endDrag);
+panel.addEventListener('touchcancel', endDrag);
 
 $('tabs').addEventListener('click', e => {
   const b = e.target.closest('[data-tab]'); if (!b) return;
-  state.tab = b.dataset.tab; state.filter = 'todos'; render();
+  goTo(MENU.findIndex(c => c.id === b.dataset.tab));
 });
 $('tabs').addEventListener('keydown', e => {
   if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-  const i = MENU.findIndex(c => c.id === state.tab);
-  state.tab = MENU[(i + (e.key === 'ArrowRight' ? 1 : MENU.length - 1)) % MENU.length].id;
-  state.filter = 'todos'; render(); $('tab-' + state.tab).focus();
+  const i = tabIndex();
+  show((i + (e.key === 'ArrowRight' ? 1 : MENU.length - 1)) % MENU.length); $('tab-' + state.tab).focus();
+});
+$('pnav').addEventListener('click', e => {
+  const b = e.target.closest('[data-go]'); if (!b) return;
+  goTo(+b.dataset.go);
 });
 $('filters').addEventListener('click', e => {
   const b = e.target.closest('[data-filter]'); if (!b) return;
   state.filter = b.dataset.filter; renderFilters(); renderList();
 });
-$('list').addEventListener('click', e => {
-  const b = e.target.closest('[data-key]'); if (!b) return;
-  const key = b.dataset.key;
-  const i = state.picked.findIndex(p => p.key === key);
-  if (i >= 0) state.picked.splice(i, 1); else state.picked.push({ key, label: b.dataset.label });
-  renderList(); renderCta();
-});
-$('clear').addEventListener('click', () => { state.picked = []; renderList(); renderCta(); });
 
 render();
 
