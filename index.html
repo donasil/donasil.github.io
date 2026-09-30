@@ -78,13 +78,7 @@ button{font:inherit;color:inherit}
 /* Páginas (Bolos / Tortas / Doces) com deslizar do dedo */
 .pager{overflow:hidden;overflow:clip}
 #panel{touch-action:pan-y;will-change:transform}
-.hint{display:none;align-items:center;justify-content:center;gap:8px;margin:0 20px;padding:10px 0 0;font:600 12px Figtree,sans-serif;color:var(--muted);letter-spacing:.02em}
-.hint svg{width:34px;height:14px;flex:none;color:var(--rose);animation:nudge 1.6s ease-in-out infinite}
-@keyframes nudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
-@media (hover:none){.hint{display:flex}}
-.hint.gone{display:none}
-@media (prefers-reduced-motion:reduce){.hint svg{animation:none}}
-.list{list-style:none;margin:0;padding:0 20px 20px}
+@media (hover:none){@media (prefers-reduced-motion:reduce){.list{list-style:none;margin:0;padding:0 20px 20px}
 
 /* Itens */
 .item{position:relative;display:flex;gap:12px;align-items:flex-start;padding:16px 12px;margin:0 -8px;border:1.5px solid transparent;border-bottom:1.5px dashed var(--line)}
@@ -218,10 +212,6 @@ button{font:inherit;color:inherit}
   <p class="intro">Conheça meus sabores e me chame no WhatsApp para encomendar!</p>
 
   <div class="tabs" role="tablist" aria-label="Categorias" id="tabs"></div>
-  <div class="hint" id="hint" aria-hidden="true">
-    <svg viewBox="0 0 34 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2L2 7l5 5M27 2l5 5-5 5M2 7h30"/></svg>
-    deslize para o lado para trocar de página
-  </div>
   <div class="pager">
     <div id="panel" role="tabpanel" aria-labelledby="">
       <div class="filters" id="filters" role="group" aria-label="Filtrar bolos"></div>
@@ -435,7 +425,6 @@ function endDrag() {
   if (Math.abs(dx) > panel.offsetWidth * 0.22 || fast) {
     const dir = dx < 0 ? 1 : -1;
     goTo(tabIndex() + dir, dir);
-    $('hint').classList.add('gone');
   } else {
     slide('', 'transform .25s ease, opacity .25s');
     $('tabs').style.setProperty('--pos', tabIndex());
