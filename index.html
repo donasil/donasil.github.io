@@ -70,10 +70,6 @@ button{font:inherit;color:inherit}
 @keyframes nudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
 @media (hover:none){.hint{display:flex}}
 .hint.gone{display:none}
-.pnav{display:flex;gap:10px;padding:4px 20px 0}
-.pnav button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:48px;border:1.5px solid var(--chip);border-radius:999px;background:var(--card);font:600 15px Figtree,sans-serif;color:var(--ink);cursor:pointer}
-.pnav button.next{color:var(--rose);border-color:var(--rose)}
-.pnav svg{width:18px;height:18px;flex:none}
 @media (prefers-reduced-motion:reduce){.hint svg{animation:none}}
 .list{list-style:none;margin:0;padding:0 20px 20px}
 
@@ -205,7 +201,7 @@ button{font:inherit;color:inherit}
     </nav>
   </header>
 
-  <p class="intro">Toque nos sabores que você gostar para deixá-los em destaque e me chame no WhatsApp para encomendar. O valor eu passo por lá, meu bem!</p>
+  <p class="intro">Conheça meus sabores e me chame no WhatsApp para encomendar!</p>
 
   <div class="tabs" role="tablist" aria-label="Categorias" id="tabs"></div>
   <div class="hint" id="hint" aria-hidden="true">
@@ -217,7 +213,6 @@ button{font:inherit;color:inherit}
       <div class="filters" id="filters" role="group" aria-label="Filtrar bolos"></div>
       <div class="note" id="note"></div>
       <ul class="list" id="list"></ul>
-      <nav class="pnav" id="pnav" aria-label="Outras páginas"></nav>
     </div>
   </div>
 
@@ -274,16 +269,12 @@ const FILTERS = [
   { id: 'Chocolate', label: 'Massa de chocolate' },
   { id: 'Especial', label: 'Massas especiais' }
 ];
-const state = { tab: 'bolos', filter: 'todos', fav: new Set() };
-// Sabores destacados ficam guardados só neste aparelho
-try { state.fav = new Set(JSON.parse(localStorage.getItem('ds-destaques') || '[]')); } catch (e) {}
-const saveFav = () => { try { localStorage.setItem('ds-destaques', JSON.stringify([...state.fav])); } catch (e) {} };
+// fav: o sabor destacado com um toque (um por vez, só para a pessoa se localizar)
+const state = { tab: 'bolos', filter: 'todos', fav: null };
 const $ = id => document.getElementById(id);
 const tabIndex = () => MENU.findIndex(c => c.id === state.tab);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
 
-const ARROW_L = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
-const ARROW_R = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
 // Selo dourado de novidade, no mesmo formato do cardápio do Canva
 const SEAL_NEW = '<svg class="seal" viewBox="0 0 100 100" role="img" aria-label="Novidade"><use href="#scallop" fill="url(#gGold)"/><ellipse cx="36" cy="27" rx="16" ry="6" fill="#fff" opacity=".22" transform="rotate(-30 38 30)"/><circle cx="50" cy="50" r="31" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1.8" stroke-dasharray="3.2 3.2"/><text x="50" y="56.5" text-anchor="middle">NOVO</text></svg>';
 // Roseta + fita do bolo assinatura
@@ -340,16 +331,12 @@ function renderList() {
     html += itemHtml(cat, it);
   });
   $('list').innerHTML = html || '<li class="empty">Nenhum bolo nesse filtro.</li>';
-  // Botões no fim da página para ir à anterior / próxima
-  const i = MENU.indexOf(cat), prevCat = MENU[i - 1], nextCat = MENU[i + 1];
-  $('pnav').innerHTML = (prevCat ? `<button type="button" data-go="${i - 1}">${ARROW_L}${prevCat.name}</button>` : '')
-    + (nextCat ? `<button type="button" class="next" data-go="${i + 1}">Ver ${nextCat.name}${ARROW_R}</button>` : '');
 }
 
 const FAV = '<svg class="fav" aria-hidden="true"><use href="#heart"/></svg>';
 
 function itemHtml(cat, it) {
-  const key = cat.id + ':' + it.n, on = state.fav.has(key);
+  const key = cat.id + ':' + it.n, on = state.fav === key;
   const attrs = `role="button" tabindex="0" aria-pressed="${on}" data-key="${esc(key)}"`;
   if (it.tag === 'sig') {
     return `<li class="hero${on ? ' on' : ''}" ${attrs}>
@@ -452,15 +439,11 @@ $('tabs').addEventListener('keydown', e => {
   const i = tabIndex();
   show((i + (e.key === 'ArrowRight' ? 1 : MENU.length - 1)) % MENU.length); $('tab-' + state.tab).focus();
 });
-$('pnav').addEventListener('click', e => {
-  const b = e.target.closest('[data-go]'); if (!b) return;
-  goTo(+b.dataset.go);
-});
 function toggleFav(el) {
-  const key = el.dataset.key, on = !state.fav.has(key);
-  if (on) state.fav.add(key); else state.fav.delete(key);
+  const on = state.fav !== el.dataset.key;
+  $('list').querySelectorAll('.on').forEach(o => { o.classList.remove('on'); o.setAttribute('aria-pressed', false); });
+  state.fav = on ? el.dataset.key : null;
   el.classList.toggle('on', on); el.setAttribute('aria-pressed', on);
-  saveFav();
 }
 $('list').addEventListener('click', e => {
   const el = e.target.closest('[data-key]'); if (el) toggleFav(el);
