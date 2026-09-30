@@ -43,12 +43,15 @@ button{font:inherit;color:inherit}
 .intro{margin:12px 20px 18px;padding:16px 18px;background:var(--blush);border-radius:18px;font-size:15px;line-height:1.5;text-wrap:pretty}
 
 /* Abas */
-.tabs{position:sticky;top:0;z-index:3;background:rgba(251,246,240,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;gap:8px;padding:12px 20px;border-bottom:1px solid #EFE0D6}
-.tab{flex:1;border:1.5px solid var(--chip);background:transparent;font:600 15px Figtree,sans-serif;padding:10px 8px;border-radius:999px;cursor:pointer;white-space:nowrap}
-.tab[aria-selected="true"]{background:var(--rose);border-color:var(--rose);color:#fff}
-.tab .n{font-weight:500;opacity:.7;font-size:13px;margin-left:2px}
-.tab.main{flex:1.5;display:flex;align-items:center;justify-content:center;gap:6px}
-.tab.main svg{width:18px;height:18px;flex:none}
+.tabs{position:sticky;top:0;z-index:3;background:rgba(251,246,240,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:grid;grid-template-columns:repeat(3,1fr);padding:4px 12px 0;border-bottom:1px solid var(--line)}
+.tab{position:relative;border:0;background:none;padding:16px 2px 18px;cursor:pointer;font:400 16px/1 'Young Serif',serif;letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;color:#957B74;transition:color .25s}
+.tab[aria-selected="true"]{color:var(--rose)}
+.tab:focus-visible{outline-offset:-4px;border-radius:10px}
+/* Marcador da aba ativa: traço com coraçãozinho, como os divisores do Canva */
+.tab-mark{position:absolute;left:12px;bottom:-1px;width:calc((100% - 24px) / 3);height:12px;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--rose);pointer-events:none;transform:translateX(calc(var(--pos,0) * 100%));transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.tab-mark::before,.tab-mark::after{content:"";width:22px;height:2px;border-radius:2px;background:currentColor}
+.tab-mark svg{width:11px;height:11px;flex:none}
+.tabs.dragging .tab-mark{transition:none}
 
 /* Filtros de bolo */
 .filters{display:flex;gap:6px;overflow-x:auto;padding:14px 20px 0;scrollbar-width:none}
@@ -260,9 +263,9 @@ const FILTERS = [
 ];
 const state = { tab: 'bolos', filter: 'todos' };
 const $ = id => document.getElementById(id);
+const tabIndex = () => MENU.findIndex(c => c.id === state.tab);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
 
-const CAKE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V13a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8M2 21h20M4 16c1.3 0 2-1 4-1s2.7 1 4 1 2-1 4-1 2.7 1 4 1M12 11V7"/><path d="M12 7c-1-1-1-2.3 0-4 1 1.7 1 3 0 4z" fill="currentColor"/></svg>';
 const ARROW_L = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
 const ARROW_R = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
 // Selo dourado de novidade, no mesmo formato do cardápio do Canva
@@ -271,9 +274,16 @@ const SEAL_NEW = '<svg class="seal" viewBox="0 0 100 100" role="img" aria-label=
 const RIBBON_SIG = '<svg class="ribbon" viewBox="0 0 150 40" role="img" aria-label="Bolo assinatura"><path d="M30 9h118l-8 11 8 11H30z" fill="url(#gRose)"/><path d="M30 9h118l-8 11 8 11H30z" fill="none" stroke="#fff" stroke-opacity=".6" stroke-dasharray="2.5 2.5" transform="translate(3 3) scale(.96 .85)"/><text x="89" y="24.3" text-anchor="middle">ASSINATURA</text><use href="#scallop" x="0" y="0" width="40" height="40" fill="url(#gRose)"/><circle cx="20" cy="20" r="12.4" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width=".9" stroke-dasharray="1.6 1.6"/><use href="#heart" x="12.5" y="12.8" width="15" height="15" color="#fff"/></svg>';
 
 function renderTabs() {
-  $('tabs').innerHTML = MENU.map(c =>
-    `<button class="tab${c.id === 'bolos' ? ' main' : ''}" role="tab" id="tab-${c.id}" aria-controls="panel" aria-selected="${c.id === state.tab}" tabindex="${c.id === state.tab ? 0 : -1}" data-tab="${c.id}">${c.id === 'bolos' ? CAKE : ''}${c.name}<span class="n">${c.items.length}</span></button>`
-  ).join('');
+  const tabs = $('tabs');
+  if (!tabs.children.length) {
+    tabs.innerHTML = MENU.map(c => `<button class="tab" role="tab" id="tab-${c.id}" aria-controls="panel" data-tab="${c.id}">${c.name}</button>`).join('')
+      + '<span class="tab-mark" aria-hidden="true"><svg><use href="#heart"/></svg></span>';
+  }
+  MENU.forEach(c => {
+    const b = $('tab-' + c.id), on = c.id === state.tab;
+    b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1;
+  });
+  tabs.style.setProperty('--pos', tabIndex());
   $('panel').setAttribute('aria-labelledby', 'tab-' + state.tab);
 }
 
@@ -338,7 +348,6 @@ function render() { renderTabs(); renderFilters(); renderList(); }
 // ---- Troca de página (abas, botões e deslizar do dedo) ----
 const panel = $('panel');
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
-const tabIndex = () => MENU.findIndex(c => c.id === state.tab);
 let busy = false;
 
 // Se a pessoa já desceu a página, a nova página começa logo abaixo das abas
@@ -360,8 +369,9 @@ function slide(to, css) {
 // dir: 1 = próxima página (entra pela direita), -1 = anterior
 function goTo(i, dir) {
   const cur = tabIndex();
-  if (busy || i === cur || i < 0 || i >= MENU.length) { slide('', 'transform .25s ease, opacity .25s'); return; }
+  if (busy || i === cur || i < 0 || i >= MENU.length) { slide('', 'transform .25s ease, opacity .25s'); $('tabs').style.setProperty('--pos', cur); return; }
   dir = dir || (i > cur ? 1 : -1);
+  $('tabs').style.setProperty('--pos', i);
   if (reduceMotion.matches) { slide('', 'none'); show(i); return; }
   busy = true;
   slide(`${-dir * 100}%`, 'transform .2s ease-in, opacity .2s ease-in');
@@ -392,11 +402,14 @@ panel.addEventListener('touchmove', e => {
   drag.dx = edge ? dx * 0.25 : dx;
   panel.style.transition = 'none';
   panel.style.transform = `translateX(${drag.dx}px)`;
+  $('tabs').classList.add('dragging');
+  $('tabs').style.setProperty('--pos', i - drag.dx / panel.offsetWidth);
   panel.style.opacity = String(1 - Math.min(Math.abs(drag.dx) / panel.offsetWidth, 1) * 0.5);
 }, { passive: true });
 function endDrag() {
   if (!drag || drag.axis !== 'x') { drag = null; return; }
   const { dx, t } = drag; drag = null;
+  $('tabs').classList.remove('dragging');
   const fast = Math.abs(dx) / (Date.now() - t) > 0.45 && Math.abs(dx) > 30;
   if (Math.abs(dx) > panel.offsetWidth * 0.22 || fast) {
     const dir = dx < 0 ? 1 : -1;
@@ -404,6 +417,7 @@ function endDrag() {
     $('hint').classList.add('gone');
   } else {
     slide('', 'transform .25s ease, opacity .25s');
+    $('tabs').style.setProperty('--pos', tabIndex());
   }
 }
 panel.addEventListener('touchend', endDrag);
