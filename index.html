@@ -51,7 +51,7 @@ button{font:inherit;color:inherit}
 .contacts svg{width:15px;height:15px;flex:none}
 
 /* Introdução: texto solto no cabeçalho, fechado por um traço com coraçãozinho */
-.intro{margin:8px 40px 12px;text-align:center;font-size:15px;line-height:1.55;color:var(--muted);text-wrap:pretty}
+.intro{margin:8px 40px 12px;text-align:center;font-size:13.5px;line-height:1.55;color:var(--muted);text-wrap:pretty}
 .intro::after{content:"";display:block;width:132px;height:12px;margin:10px auto 0;background:linear-gradient(#D9B7BE,#D9B7BE) left center/52px 1.5px no-repeat,linear-gradient(#D9B7BE,#D9B7BE) right center/52px 1.5px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23C98A99' d='M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.9 4.5 6.6 4.5c2.2 0 3.7 1.2 5.4 3.1 1.7-1.9 3.2-3.1 5.4-3.1 3.7 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z'/%3E%3C/svg%3E") center/10px no-repeat}
 
 /* Abas */
@@ -80,8 +80,7 @@ button{font:inherit;color:inherit}
 .list{list-style:none;margin:0;padding:0 20px 20px}
 
 /* Itens */
-.item{position:relative;display:flex;gap:12px;align-items:flex-start;padding:16px 12px;margin:0 -8px;border:1.5px solid transparent;border-bottom:1.5px dashed var(--line)}
-.item:last-child,.item:has(+ .group){border-bottom-color:transparent}
+.item{position:relative;display:flex;gap:12px;align-items:flex-start;padding:14px 12px 14px 14px;margin:0 0 10px;background:var(--card);border:1.5px solid #F1E2D6;border-radius:18px;box-shadow:0 4px 14px rgba(58,40,36,.06)}
 
 /* Sabor escolhido com o botão + (o item todo responde ao toque) */
 .item,.hero,.flv{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .2s,border-color .2s,box-shadow .2s,border-radius .2s}
@@ -93,8 +92,7 @@ button{font:inherit;color:inherit}
 .on>.pick .check{display:block}
 .on>.pick{background:var(--rose);border-color:var(--rose);color:#fff;animation:pickPop .35s cubic-bezier(.3,1.6,.5,1)}
 @keyframes pickPop{0%{transform:scale(.7)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
-.item.on{background:var(--card);border:1.5px solid var(--rose);border-radius:18px;box-shadow:0 6px 18px rgba(179,71,95,.14)}
-.item:has(+ .item.on){border-bottom-color:transparent}
+.item.on{border-color:var(--rose);box-shadow:0 6px 18px rgba(179,71,95,.14)}
 .hero.on{border-color:var(--rose);box-shadow:0 0 0 1.5px var(--rose),0 10px 26px rgba(179,71,95,.18)}
 .hero .pick{top:16px;right:16px;width:38px;height:38px;z-index:1}
 @media (prefers-reduced-motion:reduce){.on>.pick{animation:none}}
@@ -108,7 +106,7 @@ button{font:inherit;color:inherit}
 .open .chev{transform:rotate(180deg)}
 .flavors{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
 .flavors[hidden]{display:none}
-.flv{position:relative;display:flex;align-items:center;min-height:44px;padding:8px 52px 8px 14px;border:1.5px solid var(--line);border-radius:14px;background:var(--card);font-size:15px}
+.flv{position:relative;display:flex;align-items:center;min-height:44px;padding:8px 52px 8px 14px;border:1.5px solid var(--line);border-radius:14px;background:#FDFAF7;font-size:15px}
 .flv .pick{top:50%;right:6px;margin-top:-15px;width:30px;height:30px}
 .flv.on{border-color:var(--rose);box-shadow:0 4px 12px rgba(179,71,95,.12)}
 .body{flex:1;min-width:0}
@@ -131,17 +129,26 @@ button{font:inherit;color:inherit}
 .hero .kicker{margin:0;font:700 22px/1 Caveat,cursive;color:var(--rose)}
 .hero .name{font-size:30px;margin-top:2px}
 .hero .spec{font-size:15px;margin-top:10px;position:relative;z-index:1}
+.hero-top{display:flex;align-items:center;gap:8px}
+.hero-top .name{flex:1;min-width:0}
+
+/* Ilustração provisória do bolo (até as fotos ficarem prontas) */
+.thumb{position:relative;flex:none;width:64px;height:64px;border-radius:16px;background:#FBF1EE;display:flex;align-items:center;justify-content:center}
+.thumb svg.cake{width:60px;height:60px}
+.thumb .seal{position:absolute;left:-12px;top:-12px;width:34px;height:34px}
+.hero .thumb{width:92px;height:92px;margin:-10px -4px -6px 0;border-radius:50%;background:rgba(255,255,255,.75);box-shadow:inset 0 0 0 1.5px #F3D9DE}
+.hero .thumb svg.cake{width:86px;height:86px}
+.ilus{padding:4px 0 0;text-align:center;font-size:12px;color:var(--muted);opacity:.8}
 
 /* Novidades */
-.item.card{background:var(--card);border:1.5px solid #F1E2D6;border-radius:18px;padding:14px 12px 14px 14px;margin:0 0 10px;box-shadow:0 4px 14px rgba(58,40,36,.06)}
 .item.card .name{font-size:20px}
-.item.card.on{border-color:var(--rose)}
+.list{padding-top:4px}
 
 .group{display:flex;align-items:center;gap:12px;padding:18px 0 8px;font:600 12px Figtree,sans-serif;letter-spacing:.32em;text-transform:uppercase;color:var(--muted)}
 .group::before,.group::after{content:"";flex:1;height:1px;background:var(--line)}
 
 /* Tortas e doces: lista mais enxuta, pra deixar o protagonismo com os bolos */
-.list.compact .item{padding:14px 12px}
+.list.compact .item{padding:12px 12px 12px 16px}
 .list.compact .name{font-size:17px}
 .list.compact .item:not(.multi)>.pick{top:50%;margin-top:-17px}
 .list.compact .item:not(.multi){align-items:center;min-height:62px}
@@ -388,7 +395,88 @@ function renderList() {
     if (grouped && !it.tag && prev && prev.tag) html += '<li class="group">Clássicos da casa</li>';
     html += itemHtml(cat, it);
   });
+  if (html && cat.id === 'bolos') html += '<li class="ilus">Imagens ilustrativas — fotos dos bolos em breve.</li>';
   $('list').innerHTML = html || '<li class="empty">Nenhum bolo nesse filtro.</li>';
+}
+
+// ---- Ilustrações provisórias dos bolos (trocar pelas fotos quando ficarem prontas) ----
+// m: massa, r: camadas de recheio (cor ou 'cor|cor dos pedaços'), c: cobertura,
+// d: cor das gotas escorrendo (padrão = cobertura), t: enfeites no topo, crepe: muitas camadas finas
+const K = { branca: '#F2D7A0', choc: '#6E4030', chantilly: '#FFF9F1', ganache: '#4B2B21', morango: '#E0445A' };
+const ILU = {
+  'Dona Sil': { m: K.choc, r: ['#8B5A45', '#F7C3CD|' + K.morango], c: K.chantilly, d: K.ganache, t: ['morango', 'raspas', 'morango', 'raspas', 'morango'] },
+  'Crepe de chocolate': { m: '#7E4B39', r: ['#8B5A45', '#FBF1E1'], c: '#5A3325', crepe: true, t: ['confeito', 'confeito', 'confeito', 'confeito', 'confeito'] },
+  'Leite Ninho com uva verde': { m: K.branca, r: ['#FFF4DC|#A9C95C'], c: K.chantilly, t: ['uva', 'uva', 'uva', 'uva', 'uva'] },
+  'Nutella': { m: K.choc, r: ['#7A4A33'], c: K.ganache, d: '#FBF1E1', t: ['avela', 'avela', 'avela'] },
+  'Chocolatudo da Sil': { m: K.choc, r: ['#F7C3CD|' + K.morango, '#8B5A45', '#5C3526'], c: K.ganache, t: ['morango', 'brigadeiro', 'morango', 'brigadeiro', 'raspas'] },
+  'Chiffon de matchá': { m: '#A9C27E', r: ['#EEF3E0|#A9C95C'], c: '#EEF3E0', d: '#C9DAA4', t: ['uva', 'nectarina', 'uva', 'nectarina', 'uva'] },
+  'Iogurte, blueberries e limão siciliano': { m: '#F3E6C4', r: ['#FFF6EA|#3E4A8C'], c: '#FFF6EA', t: ['blue', 'limao', 'blue', 'blue', 'blue'] },
+  'Leite Ninho com morangos': { m: K.branca, r: ['#FFF4DC|' + K.morango], c: K.chantilly, t: ['morango', 'morango', 'morango'] },
+  'Crocante': { m: K.branca, r: ['#EBD3A6|#C48A3E'], c: K.chantilly, t: ['crocante', 'crocante', 'crocante', 'crocante', 'crocante'] },
+  'Brigadeiro': { m: K.choc, r: ['#5C3526', '#8B5A45'], c: '#B08770', d: '#5C3526', t: ['brigadeiro', 'brigadeiro', 'brigadeiro'] },
+  'Leite condensado com morangos': { m: K.branca, r: ['#FBEFD6|' + K.morango, '#FBF1E1'], c: '#FBF1E1', t: ['morango', 'morango', 'morango'] },
+  'Frutas vermelhas': { m: K.branca, r: ['#FBF1E1', '#E7A0AE|#B0243F'], c: K.chantilly, d: '#C73A55', t: ['morango', 'framboesa', 'blue', 'framboesa', 'blue'] },
+  'Nozes': { m: K.branca, r: ['#D8B48A|#8A5A2E', '#C98A4E'], c: K.chantilly, d: '#C98A4E', t: ['noz', 'noz', 'noz'] },
+  'Sensação': { m: K.choc, r: ['#F4B6C2|' + K.morango], c: K.ganache, t: ['morango', 'morango', 'morango'] },
+  'Abacaxi': { m: K.branca, r: ['#F6DC7A|#E2B92E'], c: K.chantilly, t: ['abacaxi', 'abacaxi', 'abacaxi', 'abacaxi'] },
+  'Limão': { m: K.branca, r: ['#E4EFB3'], c: K.chantilly, d: '#DCEB9A', t: ['limao', 'raspasLimao', 'limao'] },
+  'Olho de sogra': { m: K.branca, r: ['#C98A4E|#4B2342', '#FFF6E6'], c: K.chantilly, t: ['ameixa', 'coco', 'ameixa', 'coco', 'ameixa'] },
+  'Bolo pão de mel': { m: '#7A4A2C', r: ['#C98A4E'], c: K.ganache, t: ['estrela', 'raspas', 'estrela'] }
+};
+// Enfeites do topo: cada um desenhado em volta do ponto (x, y)
+const TOP = {
+  morango: (x, y) => `<path d="M${x} ${y + 3.6}c-2.6-1.2-3.8-3.4-3.2-5.3.5-1.5 1.8-2 3.2-1.4 1.4-.6 2.7-.1 3.2 1.4.6 1.9-.6 4.1-3.2 5.3z" fill="#E0445A"/><path d="M${x - 2} ${y - 2.4}l2 1 2-1-1 1.6h-2z" fill="#5E9B4C"/>`,
+  uva: (x, y) => `<circle cx="${x}" cy="${y}" r="2.6" fill="#B7D26A" stroke="#8FAE45" stroke-width=".6"/><circle cx="${x - .8}" cy="${y - .9}" r=".7" fill="#fff" opacity=".7"/>`,
+  blue: (x, y) => `<circle cx="${x}" cy="${y}" r="2.2" fill="#3E4A8C"/><circle cx="${x - .6}" cy="${y - .7}" r=".5" fill="#fff" opacity=".6"/>`,
+  framboesa: (x, y) => `<circle cx="${x}" cy="${y}" r="2.4" fill="#C72E4F"/><circle cx="${x - .8}" cy="${y - .6}" r=".6" fill="#E9738A"/><circle cx="${x + .8}" cy="${y + .5}" r=".6" fill="#E9738A"/>`,
+  limao: (x, y) => `<circle cx="${x}" cy="${y}" r="3.6" fill="#F7E77A" stroke="#D9BC2A" stroke-width=".8"/><path d="M${x} ${y - 2.8}v5.6M${x - 2.8} ${y}h5.6" stroke="#E9D357" stroke-width=".5"/>`,
+  raspasLimao: (x, y) => `<path d="M${x - 3} ${y}q1.5-1.5 3 0t3 0" stroke="#9BBF3A" stroke-width="1" fill="none" stroke-linecap="round"/>`,
+  nectarina: (x, y) => `<path d="M${x - 3.4} ${y + 1}a3.4 3.4 0 0 1 6.8 0z" fill="#F59B5B" stroke="#E0703A" stroke-width=".6"/>`,
+  confeito: (x, y) => `<rect x="${x - 2.4}" y="${y - .6}" width="3" height="1.2" rx=".6" fill="#F2A7B8" transform="rotate(-30 ${x} ${y})"/><rect x="${x + .2}" y="${y - 1.4}" width="3" height="1.2" rx=".6" fill="#F6DE92" transform="rotate(40 ${x} ${y})"/><circle cx="${x}" cy="${y + 1.6}" r=".8" fill="#fff"/>`,
+  raspas: (x, y) => `<path d="M${x - 2.5} ${y}l1.8-1.2M${x} ${y + 1}l2-.8M${x + .6} ${y - 1.4}l1.6.9" stroke="#3A2016" stroke-width="1" stroke-linecap="round"/>`,
+  brigadeiro: (x, y) => `<circle cx="${x}" cy="${y - .4}" r="3" fill="#4A2A20"/><path d="M${x - 1.6} ${y - 1.6}h.9M${x + .4} ${y - 2.2}h.9M${x - .4} ${y}h.9M${x + 1.2} ${y - .6}h.9" stroke="#8A5A45" stroke-width=".7" stroke-linecap="round"/>`,
+  avela: (x, y) => `<ellipse cx="${x}" cy="${y}" rx="2.4" ry="2.8" fill="#B07A45"/><path d="M${x - 2.2} ${y - 1}q2.2-2.6 4.4 0z" fill="#7A4E2A"/>`,
+  noz: (x, y) => `<ellipse cx="${x}" cy="${y}" rx="3" ry="2.2" fill="#A0703F"/><path d="M${x} ${y - 2}v4M${x - 2} ${y}q1-1 2 0t2 0" stroke="#7A4E2A" stroke-width=".6" fill="none"/>`,
+  abacaxi: (x, y) => `<path d="M${x - 2.4} ${y + 1.8}l2.4-4 2.4 4z" fill="#F4C542" stroke="#D9A21E" stroke-width=".6" stroke-linejoin="round"/>`,
+  ameixa: (x, y) => `<circle cx="${x}" cy="${y}" r="2.8" fill="#4B2342"/><circle cx="${x - .9}" cy="${y - .9}" r=".7" fill="#8A5A80"/>`,
+  coco: (x, y) => `<path d="M${x - 2} ${y}h1.2M${x} ${y - 1}h1.2M${x + .6} ${y + 1}h1.2M${x - 1.2} ${y + 1.4}h1" stroke="#fff" stroke-width=".9" stroke-linecap="round"/>`,
+  crocante: (x, y) => `<path d="M${x - 2} ${y + 1}l1-2.4 2.4-.4 1 2-1.8 1.6z" fill="#D9A55A" stroke="#B57F32" stroke-width=".5"/>`,
+  estrela: (x, y) => `<path d="M${x} ${y - 3}l.9 2 2.1.2-1.6 1.4.5 2.1-1.9-1.1-1.9 1.1.5-2.1-1.6-1.4 2.1-.2z" fill="#F6DE92" stroke="#C9973A" stroke-width=".5" stroke-linejoin="round"/>`
+};
+const TOP_SPOTS = [[33, 36.5], [44, 33], [53, 37], [63, 33], [71, 36.5]];
+
+// Fatia de bolo: frente com as camadas, lateral e topo com a cobertura, gotas e enfeites
+function cakeSvg(o) {
+  const x0 = 18, x1 = 70, top = 40, bot = 80, cap = 5;
+  // camadas de baixo para cima: massa, recheio, massa, ...
+  const layers = [];
+  const rs = o.crepe ? [...o.r, ...o.r, ...o.r] : o.r;
+  rs.forEach(r => { layers.push({ c: o.m, h: o.crepe ? 2.5 : 3 }); layers.push({ r, h: o.crepe ? 1.6 : 1.6 }); });
+  layers.push({ c: o.m, h: o.crepe ? 2.5 : 3 });
+  const unit = (bot - top - cap) / layers.reduce((a, l) => a + l.h, 0);
+  let y = bot, body = '';
+  layers.forEach((l, i) => {
+    const h = l.h * unit; y -= h;
+    if (l.c) { body += `<rect x="${x0}" y="${y.toFixed(2)}" width="${x1 - x0}" height="${(h + .3).toFixed(2)}" fill="${l.c}"/>`; return; }
+    const [c, dot] = l.r.split('|');
+    body += `<rect x="${x0}" y="${y.toFixed(2)}" width="${x1 - x0}" height="${(h + .3).toFixed(2)}" fill="${c}"/>`;
+    if (dot && h > 2.4) for (let k = 0; k < 5; k++) body += `<circle cx="${x0 + 6 + k * 10 + (i % 2) * 4}" cy="${(y + h / 2).toFixed(2)}" r="${Math.min(1.6, h / 2.6).toFixed(2)}" fill="${dot}"/>`;
+  });
+  const d = o.d || o.c;
+  const drips = [[22, 4], [30, 7], [38, 3.5], [47, 8], [56, 4.5], [64, 6.5]]
+    .map(([x, l]) => `<path d="M${x - 2.2} ${top + cap - .5}v${l - 2}a2.2 2.2 0 0 0 4.4 0v-${l - 2}z" fill="${d}"/>`).join('');
+  const toppings = (o.t || []).map((k, i) => TOP[k] ? TOP[k](...TOP_SPOTS[i % TOP_SPOTS.length]) : '').join('');
+  return `<svg class="cake" viewBox="4 20 92 72" aria-hidden="true">
+    <ellipse cx="51" cy="82" rx="42" ry="7.5" fill="#fff" stroke="#EAD9D3" stroke-width="1"/>
+    <ellipse cx="51" cy="82" rx="33" ry="4.6" fill="#F8EEEA"/>
+    <path d="M${x1} ${top}L84 30V70L${x1} ${bot}Z" fill="${o.c}"/><path d="M${x1} ${top}L84 30V70L${x1} ${bot}Z" fill="#3A2824" opacity=".1"/>
+    ${body}
+    <rect x="${x0}" y="${top}" width="${x1 - x0}" height="${cap}" fill="${o.c}"/>
+    ${drips}
+    <path d="M${x0} ${top}L32 30H84L${x1} ${top}Z" fill="${o.c}"/><path d="M${x0} ${top}L32 30H84L${x1} ${top}Z" fill="#fff" opacity=".18"/>
+    <path d="M${x0} ${top}L32 30H84V70L${x1} ${bot}H${x0}Z" fill="none" stroke="#3A2824" stroke-opacity=".18" stroke-width=".8" stroke-linejoin="round"/>
+    ${toppings}
+  </svg>`;
 }
 
 const PICK = '<span class="pick" aria-hidden="true"><svg class="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><svg class="check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>';
@@ -399,15 +487,16 @@ function itemHtml(cat, it) {
   const key = keyOf(cat, it), on = state.picked.has(key);
   if (it.sabores) return multiHtml(key, it);
   const attrs = `role="button" tabindex="0" aria-pressed="${on}" data-key="${esc(key)}"`;
+  const art = ILU[it.n] ? `<div class="thumb">${cakeSvg(ILU[it.n])}${it.tag === 'new' ? SEAL_NEW : ''}</div>` : (it.tag === 'new' ? SEAL_NEW : '');
   if (it.tag === 'sig') {
     return `<li class="hero${on ? ' on' : ''}" ${attrs}>
       ${PICK}${RIBBON_SIG}
       <p class="kicker">o bolo que leva o meu nome</p>
-      <h3 class="name">${esc(it.n)}</h3>${spec(it)}
+      <div class="hero-top"><h3 class="name">${esc(it.n)}</h3>${ILU[it.n] ? `<div class="thumb">${cakeSvg(ILU[it.n])}</div>` : ''}</div>${spec(it)}
     </li>`;
   }
   return `<li class="item${it.tag === 'new' ? ' card' : ''}${on ? ' on' : ''}" ${attrs}>
-      ${PICK}<div class="body"><div class="title">${it.tag === 'new' ? SEAL_NEW : ''}<h3 class="name">${esc(it.n)}</h3></div>${spec(it)}</div>
+      ${PICK}<div class="body"><div class="title">${art}<h3 class="name">${esc(it.n)}</h3></div>${spec(it)}</div>
     </li>`;
 }
 
