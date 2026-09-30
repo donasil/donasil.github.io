@@ -78,8 +78,20 @@ button{font:inherit;color:inherit}
 .list{list-style:none;margin:0;padding:0 20px 20px}
 
 /* Itens */
-.item{display:flex;gap:12px;align-items:flex-start;padding:16px 4px;border-bottom:1.5px dashed var(--line)}
-.item:last-child,.item:has(+ .group){border-bottom:0}
+.item{position:relative;display:flex;gap:12px;align-items:flex-start;padding:16px 12px;margin:0 -8px;border:1.5px solid transparent;border-bottom:1.5px dashed var(--line)}
+.item:last-child,.item:has(+ .group){border-bottom-color:transparent}
+
+/* Sabor destacado com um toque */
+.item,.hero{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .2s,border-color .2s,box-shadow .2s,border-radius .2s}
+.title{padding-right:26px}
+.fav{position:absolute;top:12px;right:12px;width:22px;height:22px;color:var(--rose);opacity:0;transform:scale(.3);transition:opacity .15s,transform .15s;pointer-events:none}
+.on>.fav{opacity:1;transform:scale(1);animation:favPop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes favPop{0%{transform:scale(.3)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+.item.on{background:var(--card);border:1.5px solid var(--rose);border-radius:18px;box-shadow:0 6px 18px rgba(179,71,95,.14)}
+.item:has(+ .item.on){border-bottom-color:transparent}
+.hero.on{border-color:var(--rose);box-shadow:0 0 0 1.5px var(--rose),0 10px 26px rgba(179,71,95,.18)}
+.hero .fav{top:16px;right:16px;width:26px;height:26px;z-index:1}
+@media (prefers-reduced-motion:reduce){.on>.fav{animation:none}}
 .body{flex:1;min-width:0}
 .title{display:flex;align-items:center;gap:10px}
 .name{margin:0;font:400 19px/1.25 'Young Serif',serif;color:var(--ink)}
@@ -102,14 +114,15 @@ button{font:inherit;color:inherit}
 .hero .spec{font-size:15px;margin-top:10px;position:relative;z-index:1}
 
 /* Novidades */
-.item.card{background:var(--card);border:1.5px solid #F1E2D6;border-radius:18px;padding:14px 12px 14px 14px;margin-bottom:10px;box-shadow:0 4px 14px rgba(58,40,36,.06)}
+.item.card{background:var(--card);border:1.5px solid #F1E2D6;border-radius:18px;padding:14px 12px 14px 14px;margin:0 0 10px;box-shadow:0 4px 14px rgba(58,40,36,.06)}
 .item.card .name{font-size:20px}
+.item.card.on{border-color:var(--rose)}
 
 .group{display:flex;align-items:center;gap:12px;padding:18px 0 8px;font:600 12px Figtree,sans-serif;letter-spacing:.32em;text-transform:uppercase;color:var(--muted)}
 .group::before,.group::after{content:"";flex:1;height:1px;background:var(--line)}
 
 /* Tortas e doces: lista mais enxuta, pra deixar o protagonismo com os bolos */
-.list.compact .item{padding:14px 4px}
+.list.compact .item{padding:14px 12px}
 .list.compact .name{font-size:17px}
 
 
@@ -192,7 +205,7 @@ button{font:inherit;color:inherit}
     </nav>
   </header>
 
-  <p class="intro">Conheça meus sabores e me chame no WhatsApp para encomendar. O valor eu passo por lá, meu bem!</p>
+  <p class="intro">Toque nos sabores que você gostar para deixá-los em destaque e me chame no WhatsApp para encomendar. O valor eu passo por lá, meu bem!</p>
 
   <div class="tabs" role="tablist" aria-label="Categorias" id="tabs"></div>
   <div class="hint" id="hint" aria-hidden="true">
@@ -261,7 +274,10 @@ const FILTERS = [
   { id: 'Chocolate', label: 'Massa de chocolate' },
   { id: 'Especial', label: 'Massas especiais' }
 ];
-const state = { tab: 'bolos', filter: 'todos' };
+const state = { tab: 'bolos', filter: 'todos', fav: new Set() };
+// Sabores destacados ficam guardados só neste aparelho
+try { state.fav = new Set(JSON.parse(localStorage.getItem('ds-destaques') || '[]')); } catch (e) {}
+const saveFav = () => { try { localStorage.setItem('ds-destaques', JSON.stringify([...state.fav])); } catch (e) {} };
 const $ = id => document.getElementById(id);
 const tabIndex = () => MENU.findIndex(c => c.id === state.tab);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
@@ -330,16 +346,20 @@ function renderList() {
     + (nextCat ? `<button type="button" class="next" data-go="${i + 1}">Ver ${nextCat.name}${ARROW_R}</button>` : '');
 }
 
+const FAV = '<svg class="fav" aria-hidden="true"><use href="#heart"/></svg>';
+
 function itemHtml(cat, it) {
+  const key = cat.id + ':' + it.n, on = state.fav.has(key);
+  const attrs = `role="button" tabindex="0" aria-pressed="${on}" data-key="${esc(key)}"`;
   if (it.tag === 'sig') {
-    return `<li class="hero">
-      ${RIBBON_SIG}
+    return `<li class="hero${on ? ' on' : ''}" ${attrs}>
+      ${FAV}${RIBBON_SIG}
       <p class="kicker">o bolo que leva o meu nome</p>
       <h3 class="name">${esc(it.n)}</h3>${spec(it)}
     </li>`;
   }
-  return `<li class="item${it.tag === 'new' ? ' card' : ''}">
-      <div class="body"><div class="title">${it.tag === 'new' ? SEAL_NEW : ''}<h3 class="name">${esc(it.n)}</h3></div>${spec(it)}</div>
+  return `<li class="item${it.tag === 'new' ? ' card' : ''}${on ? ' on' : ''}" ${attrs}>
+      ${FAV}<div class="body"><div class="title">${it.tag === 'new' ? SEAL_NEW : ''}<h3 class="name">${esc(it.n)}</h3></div>${spec(it)}</div>
     </li>`;
 }
 
@@ -435,6 +455,20 @@ $('tabs').addEventListener('keydown', e => {
 $('pnav').addEventListener('click', e => {
   const b = e.target.closest('[data-go]'); if (!b) return;
   goTo(+b.dataset.go);
+});
+function toggleFav(el) {
+  const key = el.dataset.key, on = !state.fav.has(key);
+  if (on) state.fav.add(key); else state.fav.delete(key);
+  el.classList.toggle('on', on); el.setAttribute('aria-pressed', on);
+  saveFav();
+}
+$('list').addEventListener('click', e => {
+  const el = e.target.closest('[data-key]'); if (el) toggleFav(el);
+});
+$('list').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const el = e.target.closest('[data-key]'); if (!el) return;
+  e.preventDefault(); toggleFav(el);
 });
 $('filters').addEventListener('click', e => {
   const b = e.target.closest('[data-filter]'); if (!b) return;
