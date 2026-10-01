@@ -165,14 +165,63 @@ button{font:inherit;color:inherit}
 /* Barra de pedido */
 .cta{position:fixed;left:0;right:0;bottom:0;z-index:4;display:flex;justify-content:center;padding:14px 16px 18px;background:linear-gradient(rgba(251,246,240,0),var(--bg) 30%)}
 .cta-inner{width:100%;max-width:448px}
-.picked{display:none;align-items:center;gap:8px;margin-bottom:8px;padding:8px 8px 8px 14px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;font-size:13px;color:var(--muted);box-shadow:0 4px 14px rgba(58,40,36,.08)}
+.picked{display:none;width:100%;align-items:center;gap:10px;margin-bottom:8px;padding:7px 12px 7px 7px;background:var(--card);border:1.5px solid var(--line);border-radius:16px;font-size:13px;color:var(--muted);text-align:left;cursor:pointer;box-shadow:0 4px 14px rgba(58,40,36,.08);transition:border-color .2s}
+.picked:hover{border-color:var(--rose)}
 .picked.show{display:flex}
-.picked span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.picked b{color:var(--ink)}
-.picked button{flex:none;border:0;background:none;color:var(--rose);font:600 13px Figtree,sans-serif;cursor:pointer;padding:6px 8px}
+.picked-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.picked-text b{color:var(--ink)}
+.see{flex:none;display:flex;align-items:center;gap:2px;color:var(--rose);font-weight:700}
+.see svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+/* Saquinho com a quantidade de escolhidos */
+.bag{position:relative;flex:none;width:36px;height:36px;border-radius:50%;background:var(--blush);color:var(--rose);display:flex;align-items:center;justify-content:center}
+.bag svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bag-n{position:absolute;top:-5px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;border:2px solid var(--card);background:var(--rose);color:#fff;font:700 10.5px/15px Figtree,sans-serif;text-align:center}
+.bag-n.bump{animation:pickPop .35s cubic-bezier(.3,1.6,.5,1)}
+@media (prefers-reduced-motion:reduce){.bag-n.bump{animation:none}}
 .wa{height:56px;border-radius:999px;background:var(--rose);color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;font:700 16px Figtree,sans-serif;text-decoration:none;box-shadow:0 8px 20px rgba(179,71,95,.35)}
 .wa:hover{background:var(--rose-dark);color:#fff}
 .wa svg{width:22px;height:22px}
+
+/* Carrinho: folha que sobe de baixo para ver e editar o pedido */
+html:has(.cart[open]){overflow:hidden}
+.cart{position:fixed;inset:auto 0 0;width:100%;max-width:480px;max-height:90vh;max-height:90dvh;margin:0 auto;padding:0;border:0;border-radius:24px 24px 0 0;background:var(--bg);color:var(--ink);box-shadow:0 -10px 40px rgba(58,40,36,.2);flex-direction:column;overflow:hidden}
+.cart[open]{display:flex;animation:cartUp .32s cubic-bezier(.2,.8,.2,1)}
+.cart::backdrop{background:rgba(58,40,36,.45)}
+@keyframes cartUp{from{transform:translateY(100%)}}
+@media (prefers-reduced-motion:reduce){.cart[open]{animation:none}}
+.cart-head{flex:none;display:flex;align-items:center;gap:10px;padding:10px 14px 12px 20px;border-bottom:1px solid var(--line)}
+.cart-head::before{content:"";position:absolute;left:50%;top:7px;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:var(--chip)}
+.cart-head h2{flex:1;margin:10px 0 0;font:400 22px/1.2 'Young Serif',serif}
+.cart-head h2 small{display:block;font:500 13px Figtree,sans-serif;color:var(--muted)}
+.cart-close{flex:none;margin-top:10px;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cart-close svg,.line-del svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.cart-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 16px 18px}
+.cart-list{list-style:none;margin:0;padding:0}
+.cart-body .group{padding-top:16px}
+.line{display:flex;gap:12px;padding:12px;margin-bottom:8px;background:var(--card);border:1.5px solid #F1E2D6;border-radius:16px;box-shadow:0 3px 10px rgba(58,40,36,.05)}
+.line .thumb{width:54px;height:54px;border-radius:14px}
+.line .thumb svg.cake{width:50px;height:50px}
+.line-main{flex:1;min-width:0}
+.line-top{display:flex;align-items:flex-start;gap:6px}
+.line-name{flex:1;margin:2px 0 0;font:400 17px/1.25 'Young Serif',serif}
+.line-del{flex:none;width:34px;height:34px;margin:-6px -6px 0 0;border:0;border-radius:50%;background:none;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.line-del:hover{background:var(--blush);color:var(--rose)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{border:1.5px solid var(--chip);background:var(--card);border-radius:999px;padding:5px 11px;font:500 13px Figtree,sans-serif;color:var(--muted);cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--rose);background:var(--blush);color:var(--rose-dark);font-weight:600}
+.add-note{margin-top:4px;border:0;background:none;padding:4px 0;color:var(--rose);font:600 13px Figtree,sans-serif;cursor:pointer}
+.field{display:block;width:100%;margin-top:8px;padding:9px 11px;border:1.5px solid var(--line);border-radius:12px;background:#FDFAF7;font:15px/1.4 Figtree,sans-serif;color:var(--ink);resize:vertical}
+.field:focus{outline:none;border-color:var(--rose)}
+.field::placeholder{color:#A99189}
+.order-note{margin-top:18px}
+.order-note label{font:700 22px Caveat,cursive;color:var(--rose)}
+.cart-empty{padding:36px 12px 20px;text-align:center;color:var(--muted)}
+.cart-empty p{margin:0 0 14px}
+.cart-empty .thanks{font-size:26px;margin-bottom:6px}
+.back{border:1.5px solid var(--rose);background:none;color:var(--rose);border-radius:999px;padding:10px 18px;font:600 14px Figtree,sans-serif;cursor:pointer}
+.cart-clear{display:block;margin:16px auto 0;border:0;background:none;color:var(--muted);font:600 13px Figtree,sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px}
+.cart-foot{flex:none;padding:12px 16px 18px;border-top:1px solid var(--line);background:var(--bg)}
+.cart-foot p{margin:0 0 10px;text-align:center;font-size:12.5px;color:var(--muted)}
 
 /* Abertura carinhosa */
 .splash{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;background:radial-gradient(circle at 50% 44%,#fff 0,#FDF1F2 38%,var(--blush) 72%,#F3D3D9 100%);
@@ -277,16 +326,29 @@ button{font:inherit;color:inherit}
 
 <div class="cta">
   <div class="cta-inner">
-    <div class="picked" id="picked" aria-live="polite">
-      <span id="pickedText"></span>
-      <button type="button" id="clear">Limpar</button>
-    </div>
+    <button class="picked" id="picked" type="button" aria-haspopup="dialog" aria-controls="cart">
+      <span class="bag" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5.5 8h13l-1.1 12.1a1 1 0 0 1-1 .9H7.6a1 1 0 0 1-1-.9z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/></svg><span class="bag-n" id="bagN"></span></span>
+      <span class="picked-text" id="pickedText" aria-live="polite"></span>
+      <span class="see">Ver pedido<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span>
+    </button>
     <a class="wa" id="wa" target="_blank" rel="noopener" href="https://wa.me/5511995233302?text=Oi%20Dona%20Sil!%20Vi%20o%20card%C3%A1pio%20e%20queria%20fazer%20uma%20encomenda.">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
       <span id="waText">Chamar no WhatsApp</span>
     </a>
   </div>
 </div>
+
+<dialog class="cart" id="cart" aria-labelledby="cartTitle">
+  <div class="cart-head">
+    <h2 id="cartTitle" tabindex="-1">Seu pedido<small id="cartCount"></small></h2>
+    <button class="cart-close" type="button" id="cartClose" aria-label="Fechar e voltar ao cardápio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-foot">
+    <p>Peso, quantidade e preço você combina direto com a Dona Sil.</p>
+    <a class="wa" id="waCart" target="_blank" rel="noopener" href="https://wa.me/5511995233302"><span id="waCartText">Encomendar no WhatsApp</span></a>
+  </div>
+</dialog>
 
 <script>
 // Conteúdo do cardápio — fonte: Canva "Cardápio Dona Sil - OUT/25".
@@ -333,8 +395,10 @@ const FILTERS = [
 ];
 // picked: sabores escolhidos no + (peso, quantidade e preço são combinados com a Dona Sil)
 // open: itens com vários sabores que estão abertos
+// notes: observação de cada item do pedido; orderNote: observação do pedido todo
+// noteOpen: itens do carrinho com o campo de observação aberto
 const PHONE = '5511995233302';
-const state = { tab: 'bolos', filter: 'todos', picked: new Set(), open: new Set() };
+const state = { tab: 'bolos', filter: 'todos', picked: new Set(), open: new Set(), notes: {}, orderNote: '', noteOpen: new Set() };
 const $ = id => document.getElementById(id);
 const tabIndex = () => MENU.findIndex(c => c.id === state.tab);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
@@ -533,26 +597,144 @@ function multiHtml(cat, key, it) {
     </li>`;
 }
 
-// Escolhidos na ordem do cardápio, agrupados por categoria (para o resumo e a mensagem)
+// Escolhidos na ordem do cardápio, agrupados por categoria (para o resumo, o carrinho e a mensagem).
+// Cada linha é um item; os doces com vários sabores viram uma linha só, com os sabores escolhidos.
 function pickedByCat() {
-  return MENU.map(cat => ({ cat, names: cat.items.flatMap(it => {
+  return MENU.map(cat => ({ cat, lines: cat.items.flatMap(it => {
     const key = keyOf(cat, it);
-    if (!it.sabores) return state.picked.has(key) ? [it.n] : [];
+    if (!it.sabores) return state.picked.has(key) ? [{ key, it, label: it.n }] : [];
     const s = it.sabores.filter(f => state.picked.has(key + ':' + f));
-    return s.length ? [`${it.n} (${s.join(', ')})`] : [];
-  }) })).filter(g => g.names.length);
+    return s.length ? [{ key, it, flavors: s, label: `${it.n} (${s.join(', ')})` }] : [];
+  }) })).filter(g => g.lines.length);
+}
+
+const noteOf = key => (state.notes[key] || '').trim();
+
+function waMessage(groups) {
+  if (!state.picked.size) return 'Oi Dona Sil! Vi o cardápio e queria fazer uma encomenda.';
+  const order = state.orderNote.trim();
+  return 'Oi Dona Sil! Vi o cardápio e queria encomendar:\n'
+    + groups.map(g => `\n${g.cat.name}\n` + g.lines.map(l => '• ' + l.label + (noteOf(l.key) ? ' — ' + noteOf(l.key) : '')).join('\n')).join('\n')
+    + (order ? '\n\nObservações: ' + order : '');
 }
 
 function renderCta() {
   const groups = pickedByCat(), n = state.picked.size;
   $('picked').classList.toggle('show', n > 0);
   $('foot').classList.toggle('picking', n > 0);
-  $('pickedText').innerHTML = n ? `<b>${n} ${n === 1 ? 'escolhido' : 'escolhidos'}:</b> ${esc(groups.flatMap(g => g.names).join(', '))}` : '';
+  const bag = $('bagN');
+  if (bag.textContent !== String(n)) { bag.textContent = n; bag.classList.remove('bump'); void bag.offsetWidth; bag.classList.add('bump'); }
+  $('pickedText').innerHTML = n ? `<b>${n} ${n === 1 ? 'escolhido' : 'escolhidos'}:</b> ${esc(groups.flatMap(g => g.lines.map(l => l.label)).join(', '))}` : '';
   $('waText').textContent = n ? 'Encomendar no WhatsApp' : 'Chamar no WhatsApp';
-  const msg = n
-    ? 'Oi Dona Sil! Vi o cardápio e queria encomendar:\n' + groups.map(g => `\n${g.cat.name}\n` + g.names.map(s => '• ' + s).join('\n')).join('\n')
-    : 'Oi Dona Sil! Vi o cardápio e queria fazer uma encomenda.';
-  $('wa').href = 'https://wa.me/' + PHONE + '?text=' + encodeURIComponent(msg);
+  $('waCartText').textContent = $('waText').textContent;
+  $('wa').href = $('waCart').href = 'https://wa.me/' + PHONE + '?text=' + encodeURIComponent(waMessage(groups));
+  save();
+}
+
+// ---- Carrinho: ver e editar os escolhidos ----
+const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1.5 1.5 0 0 0 1.5 1.4h7A1.5 1.5 0 0 0 17 19l1-12M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+
+function lineHtml(cat, l) {
+  const img = artHtml(cat, l.it), k = esc(l.key), note = state.notes[l.key] || '';
+  const chips = l.it.sabores ? `<div class="chips" role="group" aria-label="Sabores de ${esc(l.it.n)}">${l.it.sabores.map(s => {
+    const on = state.picked.has(l.key + ':' + s);
+    return `<button class="chip" type="button" aria-pressed="${on}" data-flavor="${esc(l.key + ':' + s)}">${esc(s)}</button>`;
+  }).join('')}</div>` : '';
+  const noteHtml = note || state.noteOpen.has(l.key)
+    ? `<textarea class="field" rows="1" data-note="${k}" aria-label="Observação para ${esc(l.it.n)}" placeholder="Ex.: tamanho, quantidade, sem açúcar…">${esc(note)}</textarea>`
+    : `<button class="add-note" type="button" data-add-note="${k}">+ Adicionar observação</button>`;
+  return `<li class="line">
+      ${img ? `<div class="thumb">${img}</div>` : ''}
+      <div class="line-main">
+        <div class="line-top"><h3 class="line-name">${esc(l.it.n)}</h3><button class="line-del" type="button" data-remove="${k}" aria-label="Tirar ${esc(l.it.n)} do pedido">${TRASH}</button></div>
+        ${chips}${noteHtml}
+      </div>
+    </li>`;
+}
+
+function renderCart() {
+  const groups = pickedByCat(), n = state.picked.size;
+  $('cartCount').textContent = n ? `${n} ${n === 1 ? 'sabor escolhido' : 'sabores escolhidos'}` : '';
+  $('cartBody').innerHTML = n
+    ? '<ul class="cart-list">' + groups.map(g => `<li class="group">${g.cat.name}</li>` + g.lines.map(l => lineHtml(g.cat, l)).join('')).join('') + '</ul>'
+      + `<div class="order-note"><label for="orderNote">Alguma observação pro pedido?</label>
+        <textarea class="field" id="orderNote" rows="2" placeholder="Ex.: para sábado, retirada às 15h">${esc(state.orderNote)}</textarea></div>
+        <button class="cart-clear" type="button" id="cartClear">Esvaziar pedido</button>`
+    : `<div class="cart-empty"><div class="thanks">Seu pedido está vazio</div><p>Toque no + dos sabores que quiser e eles aparecem aqui.</p><button class="back" type="button" data-close>Voltar ao cardápio</button></div>`;
+  $('cartBody').querySelectorAll('textarea').forEach(fit);
+}
+
+// Campo de texto cresce junto com o que a pessoa escreve
+function fit(t) { t.style.height = 'auto'; t.style.height = t.scrollHeight + 3 + 'px'; }
+
+// Redesenha o carrinho (e o cardápio por baixo) mantendo o foco onde faz sentido
+function refreshCart(sel) {
+  renderList(); renderCta(); renderCart();
+  const el = sel && $('cartBody').querySelector(sel);
+  (el || $('cartBody').querySelector('.line-del, .back') || $('cartTitle')).focus();
+}
+
+const cart = $('cart');
+$('waCart').prepend($('wa').querySelector('svg').cloneNode(true));
+function openCart() { state.noteOpen.clear(); cart.showModal(); renderCart(); $('cartTitle').focus(); }
+$('picked').addEventListener('click', openCart);
+$('cartClose').addEventListener('click', () => cart.close());
+// Toque fora da folha (no fundo escurecido) também fecha
+cart.addEventListener('click', e => { if (e.target === cart) cart.close(); });
+
+$('cartBody').addEventListener('click', e => {
+  const t = e.target.closest('button'); if (!t) return;
+  if (t.dataset.close !== undefined) { cart.close(); return; }
+  if (t.id === 'cartClear') {
+    if (!confirm('Tirar todos os sabores do pedido?')) return;
+    state.picked.clear(); state.notes = {}; state.orderNote = ''; refreshCart(); return;
+  }
+  if (t.dataset.remove) {
+    const key = t.dataset.remove, li = t.closest('.line'), next = li.nextElementSibling || li.previousElementSibling;
+    const nextKey = next && next.querySelector('[data-remove]') && next.querySelector('[data-remove]').dataset.remove;
+    [...state.picked].forEach(k => { if (k === key || k.startsWith(key + ':')) state.picked.delete(k); });
+    delete state.notes[key];
+    refreshCart(nextKey && `[data-remove="${CSS.escape(nextKey)}"]`); return;
+  }
+  if (t.dataset.flavor) {
+    const k = t.dataset.flavor, base = k.slice(0, k.lastIndexOf(':'));
+    if (!state.picked.delete(k)) state.picked.add(k);
+    if (![...state.picked].some(p => p.startsWith(base + ':'))) delete state.notes[base];
+    refreshCart(`[data-flavor="${CSS.escape(k)}"]`); return;
+  }
+  if (t.dataset.addNote) {
+    state.noteOpen.add(t.dataset.addNote);
+    refreshCart(`[data-note="${CSS.escape(t.dataset.addNote)}"]`);
+  }
+});
+// Observações: só atualizam a mensagem, sem redesenhar (para não perder o que está sendo digitado)
+$('cartBody').addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.note) state.notes[t.dataset.note] = t.value;
+  else if (t.id === 'orderNote') state.orderNote = t.value;
+  else return;
+  fit(t); renderCta();
+});
+
+// ---- Pedido guardado no aparelho, para não sumir se a página recarregar ----
+const STORE = 'donasil-pedido';
+function save() {
+  try {
+    localStorage.setItem(STORE, JSON.stringify({ picked: [...state.picked], notes: state.notes, orderNote: state.orderNote }));
+  } catch (e) {}
+}
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORE) || 'null'); if (!d) return;
+    // Só aceita sabores que ainda existem no cardápio
+    const valid = new Set(MENU.flatMap(cat => cat.items.flatMap(it => {
+      const key = keyOf(cat, it);
+      return it.sabores ? it.sabores.map(s => key + ':' + s) : [key];
+    })));
+    (d.picked || []).forEach(k => { if (valid.has(k)) state.picked.add(k); });
+    Object.entries(d.notes || {}).forEach(([k, v]) => { if (typeof v === 'string' && v.trim()) state.notes[k] = v; });
+    if (typeof d.orderNote === 'string') state.orderNote = d.orderNote;
+  } catch (e) {}
 }
 
 function render() { renderTabs(); renderFilters(); renderList(); renderCta(); }
@@ -669,12 +851,12 @@ $('list').addEventListener('keydown', e => {
   const el = e.target.closest('[data-key]'); if (!el) return;
   e.preventDefault(); togglePick(el);
 });
-$('clear').addEventListener('click', () => { state.picked.clear(); renderList(); renderCta(); });
 $('filters').addEventListener('click', e => {
   const b = e.target.closest('[data-filter]'); if (!b) return;
   state.filter = b.dataset.filter; renderFilters(); renderList();
 });
 
+load();
 render();
 
 // Abertura: some sozinha depois da animação ou com um toque
