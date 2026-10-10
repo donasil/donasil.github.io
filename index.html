@@ -153,6 +153,8 @@ button.pick::before{content:"";position:absolute;inset:-6px;border-radius:50%}
 
 .group{display:flex;align-items:center;gap:12px;padding:18px 0 8px;font:600 12px Figtree,sans-serif;letter-spacing:.32em;text-transform:uppercase;color:var(--muted)}
 .group::before,.group::after{content:"";flex:1;height:1px;background:var(--line)}
+.group-note{margin:-2px 0 10px;text-align:center;font:600 13px Figtree,sans-serif;color:var(--rose)}
+.line-hint{margin:2px 0 0;font:600 12px Figtree,sans-serif;color:var(--muted)}
 
 /* Tortas e doces: lista mais enxuta, pra deixar o protagonismo com os bolos */
 .list.compact .item{padding:12px 12px 12px 16px}
@@ -373,37 +375,50 @@ html:has(.cart[open]){overflow:hidden}
 // Para atualizar, edite só esta lista.
 // tag: 'new' marca novidade (ficam no topo dos bolos, logo depois do assinatura);
 // sabores: [...] faz o item abrir e fechar, com cada sabor escolhido separado.
+// g: grupo dentro da aba (tortas doces/salgadas, docinhos gourmet/outros doces); o aviso do grupo fica em GRUPO_NOTA.
+// rotulo: nome usado no pedido e na mensagem do WhatsApp quando o nome sozinho fica ambíguo (ex.: tortas salgadas).
 const MENU = [
   { id: 'bolos', name: 'Bolos', note: 'escolha o seu sabor preferido', items: [
     { n: 'Dona Sil', tag: 'sig', massa: 'Chocolate', m: 'Chocolate', r: 'Mousse de chocolate meio amargo e creme com pedaços de morango', c: 'Chantilly com ganache de chocolate meio amargo' },
     { n: 'Crepe de chocolate', tag: 'new', massa: 'Especial', m: 'Discos de crepe sabor chocolate', r: 'Mousse de chocolate meio amargo e mousse de chocolate branco', c: 'Mousse de chocolate meio amargo com confeitos' },
     { n: 'Leite Ninho com uva verde', tag: 'new', massa: 'Branca', m: 'Branca', r: 'Leite Ninho com pedaços de uva verde', c: 'Chantilly' },
     { n: 'Nutella', massa: 'Chocolate', m: 'Chocolate', r: 'Creme de Nutella', c: 'Ganache mesclado de chocolate meio amargo e branco' },
+    { n: 'Carinhoso de Nutella', r: 'Dois recheios: creme de avelã e mousse de chocolate ao leite', c: 'Ganache de chocolate' },
     { n: 'Chocolatudo da Sil', massa: 'Chocolate', m: 'Chocolate', r: '3 camadas: creme de chocolate com pedaços de morango, mousse de chocolate meio amargo e uma leve camada de brigadeiro', c: 'Ganache de chocolate meio amargo' },
     { n: 'Chiffon de matchá', massa: 'Especial', m: 'Sabor matchá', rc: 'Mousse de matchá e nata com uvas verdes e nectarinas' },
     { n: 'Iogurte, blueberries e limão siciliano', massa: 'Especial', m: 'Iogurte', rc: 'Cream cheese, mascarpone, blueberries e limão siciliano' },
     { n: 'Leite Ninho com morangos', massa: 'Branca', m: 'Branca', r: 'Leite Ninho com pedaços de morango', c: 'Chantilly' },
     { n: 'Crocante', massa: 'Branca', m: 'Branca', r: 'Creme de Leite Ninho com crocante', c: 'Chantilly' },
     { n: 'Brigadeiro', massa: 'Chocolate', m: 'Chocolate', r: 'Brigadeiro e creme de chocolate', c: 'Chantilly de chocolate' },
+    { n: 'Prestígio' },
+    { n: 'Mousse de chocolate' },
     { n: 'Leite condensado com morangos', massa: 'Branca', m: 'Branca', r: 'Leite condensado com pedaços de morango e mousse de chocolate branco', c: 'Mousse de chocolate branco' },
     { n: 'Frutas vermelhas', massa: 'Branca', m: 'Branca', r: 'Mousse de chocolate branco e creme com frutas vermelhas', c: 'Chantilly' },
     { n: 'Nozes', massa: 'Branca', m: 'Branca', r: 'Strogonoff de nozes e doce de leite', c: 'Chantilly' },
     { n: 'Sensação', massa: 'Chocolate', m: 'Chocolate', r: 'Creme de morango com pedaços de morango', c: 'Ganache de chocolate meio amargo' },
     { n: 'Abacaxi', massa: 'Branca', m: 'Branca', r: 'Creme com doce de abacaxi', c: 'Chantilly' },
+    { n: 'Abacaxi com coco' },
     { n: 'Limão', massa: 'Branca', m: 'Branca', r: 'Mousse de limão com ganache de limão', c: 'Chantilly' },
     { n: 'Olho de sogra', massa: 'Branca', m: 'Branca', r: 'Doce de leite com ameixa e beijinho', c: 'Chantilly' },
     { n: 'Bolo pão de mel', massa: 'Chocolate', m: 'Chocolate, mel e especiarias', r: 'Doce de leite', c: 'Ganache de chocolate' }
   ]},
-  { id: 'tortas', name: 'Tortas', note: 'pra adoçar qualquer encontro', items: [
-    { n: 'Banoffee' }, { n: 'Café' }, { n: 'Três chocolates' }, { n: 'Nutella' },
-    { n: 'Limão siciliano' }, { n: 'Morango' }, { n: 'Maracujá' }, { n: 'Uva verde' }
+  { id: 'tortas', name: 'Tortas', note: 'doces e salgadas, pra qualquer encontro', items: [
+    { g: 'Tortas doces', n: 'Banoffee' }, { g: 'Tortas doces', n: 'Café' }, { g: 'Tortas doces', n: 'Três chocolates' }, { g: 'Tortas doces', n: 'Nutella' },
+    { g: 'Tortas doces', n: 'Limão siciliano' }, { g: 'Tortas doces', n: 'Morango' }, { g: 'Tortas doces', n: 'Maracujá' }, { g: 'Tortas doces', n: 'Uva verde' },
+    { g: 'Tortas doces', n: 'Cheesecake de frutas vermelhas' },
+    { g: 'Tortas salgadas', n: 'Atum', rotulo: 'Torta salgada de atum' },
+    { g: 'Tortas salgadas', n: 'Palmito', rotulo: 'Torta salgada de palmito' }
   ]},
   { id: 'doces', name: 'Doces', note: 'pra festa, pra mesa, pra presente', items: [
-    { n: 'Brigadeiros gourmet', sabores: ['Tradicional', 'Beijinho', 'Leite Ninho', 'Nutella', 'Bicho de pé'] },
-    { n: 'Pão de mel' },
-    { n: 'Brownie' }
+    { g: 'Docinhos gourmet', n: 'Brigadeiros gourmet', sabores: ['Tradicional', 'Beijinho', 'Leite Ninho', 'Nutella', 'Bicho de pé'] },
+    { g: 'Docinhos gourmet', n: 'Quindim' },
+    { g: 'Docinhos gourmet', n: 'Olho de sogra' },
+    { g: 'Outros doces', n: 'Pão de mel' },
+    { g: 'Outros doces', n: 'Brownie' }
   ]}
 ];
+// Aviso que aparece embaixo do título do grupo (e no pedido, em cada item do grupo)
+const GRUPO_NOTA = { 'Docinhos gourmet': 'Pedido mínimo de 50 unidades' };
 const FILTERS = [
   { id: 'todos', label: 'Todos' },
   { id: 'new', label: 'Novidades' },
@@ -474,6 +489,10 @@ function renderList() {
     const prev = items[i - 1];
     if (grouped && it.tag === 'new' && (!prev || prev.tag !== 'new')) html += '<li class="group">Novidades</li>';
     if (grouped && !it.tag && prev && prev.tag) html += '<li class="group">Clássicos da casa</li>';
+    if (it.g && (!prev || prev.g !== it.g)) {
+      html += `<li class="group">${esc(it.g)}</li>`;
+      if (GRUPO_NOTA[it.g]) html += `<li class="group-note">${esc(GRUPO_NOTA[it.g])}</li>`;
+    }
     html += itemHtml(cat, it);
   });
   if (html && ART_NOTE[cat.id]) html += `<li class="ilus">${ART_NOTE[cat.id]}</li>`;
@@ -500,7 +519,11 @@ const TORTA = {
   'Limão siciliano': { f: '#F2E394', t: ['merengue', 'merengue', 'limao', 'merengue', 'merengue'] },
   'Morango': { f: '#FFF1DA', t: ['morango', 'morango', 'morango', 'morango', 'morango'] },
   'Maracujá': { f: '#F6C945', seeds: '#3A2016', t: [] },
-  'Uva verde': { f: '#FFF1DA', t: ['uva', 'uva', 'uva', 'uva', 'uva'] }
+  'Uva verde': { f: '#FFF1DA', t: ['uva', 'uva', 'uva', 'uva', 'uva'] },
+  'Cheesecake de frutas vermelhas': { f: '#FFF6EC', t: ['morango', 'mirtilo', 'framboesa', 'mirtilo', 'morango'] },
+  // tortas salgadas: massa por cima (tampa), com gergelim
+  'Atum': { tampa: true, t: [] },
+  'Palmito': { tampa: true, t: [] }
 };
 // Enfeites do topo: cada um desenhado em volta do ponto (x, y)
 const TOP = {
@@ -514,10 +537,18 @@ const TOP = {
   chantilly: (x, y) => `<path d="M${x - 3} ${y + 1.6}q0-3.4 3-5 3 1.6 3 5z" fill="#fff" stroke="#EADFD6" stroke-width=".6"/><path d="M${x - 1.5} ${y + 1.4}q.5-2.4 1.5-3.4" stroke="#EADFD6" stroke-width=".5" fill="none"/>`,
   canela: (x, y) => `<circle cx="${x - 1.5}" cy="${y}" r=".5" fill="#8A5A2E"/><circle cx="${x + 1}" cy="${y - 1}" r=".5" fill="#8A5A2E"/><circle cx="${x + .5}" cy="${y + 1.2}" r=".5" fill="#8A5A2E"/>`,
   cafe: (x, y) => `<ellipse cx="${x}" cy="${y}" rx="2" ry="1.4" fill="#3A2016"/><path d="M${x - 1.6} ${y}q1.6-.8 3.2 0" stroke="#7A4E2A" stroke-width=".5" fill="none"/>`,
+  mirtilo: (x, y) => `<circle cx="${x}" cy="${y}" r="2.4" fill="#3E4A8A"/><circle cx="${x - .7}" cy="${y - .8}" r=".6" fill="#fff" opacity=".5"/>`,
+  framboesa: (x, y) => `<circle cx="${x}" cy="${y}" r="2.8" fill="#C7354E"/><circle cx="${x - 1}" cy="${y - .6}" r=".7" fill="#E0607A"/><circle cx="${x + 1}" cy="${y + .4}" r=".7" fill="#E0607A"/><circle cx="${x}" cy="${y - 1.4}" r=".6" fill="#E0607A"/>`,
   merengue: (x, y) => `<path d="M${x - 2.8} ${y + 1.8}q0-3.2 2.8-5.2 2.8 2 2.8 5.2z" fill="#FFF8EC"/><path d="M${x - 1} ${y - 2.2}q1-1.4 2 0" stroke="#D9A55A" stroke-width="1" fill="none" stroke-linecap="round"/>`,
 };
 
 const TORTA_SPOTS = [[35, 45], [49, 39.5], [63, 44], [42, 51.5], [57, 51.5]];
+
+// Tampa de massa das tortas salgadas: dourada, com cortes e gergelim
+const tampa = () => `<ellipse cx="50" cy="45.5" rx="35" ry="13.6" fill="#E3AE68"/><ellipse cx="50" cy="44.5" rx="31" ry="11" fill="#EDBE79"/>
+    <path d="M38 40q4 3 0 7M50 37q4 3.5 0 8M62 40q4 3 0 7" stroke="#C48A45" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    ${[[30, 46], [44, 49], [56, 49], [70, 46], [44, 41], [57, 41], [36, 44], [64, 44]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="1" ry=".6" fill="#FFF6E2"/>`).join('')}
+    <ellipse cx="40" cy="40" rx="14" ry="3.4" fill="#fff" opacity=".2"/>`;
 
 // Torta inteira vista de lado: borda de massa canelada, recheio e enfeites por cima
 function tortaSvg(o) {
@@ -534,7 +565,7 @@ function tortaSvg(o) {
     <ellipse cx="50" cy="72" rx="42" ry="10" fill="#fff" stroke="#EAD9D3" stroke-width="1"/>
     <path d="M12 46V56A38 15 0 0 0 88 56V46Z" fill="#D9A566"/>${flutes}
     <ellipse cx="50" cy="46" rx="38" ry="15" fill="#E8BD7E"/>
-    <ellipse cx="50" cy="46.5" rx="33" ry="12.2" fill="${o.f}"/><ellipse cx="42" cy="42" rx="16" ry="4" fill="#fff" opacity=".18"/>
+    ${o.tampa ? tampa() : `<ellipse cx="50" cy="46.5" rx="33" ry="12.2" fill="${o.f}"/><ellipse cx="42" cy="42" rx="16" ry="4" fill="#fff" opacity=".18"/>`}
     ${seeds}${drizzle}${toppings}
   </svg>`;
 }
@@ -558,6 +589,16 @@ const DOCE = {
     <path d="M30 49q5-5 10 0t10 0 10 0 10 0M33 53q5-5 10 0t10 0 10 0" stroke="#FFF6EA" stroke-width="1.3" fill="none" stroke-linecap="round"/>
     <path d="M26 58v6M34 61v7M60 62v6M72 58v5" stroke="#FFF6EA" stroke-width="1.3" stroke-linecap="round" opacity=".85"/>
     <ellipse cx="42" cy="47" rx="10" ry="2.4" fill="#fff" opacity=".12"/>
+  </svg>`,
+  // Quindim: amarelo brilhante, de cabeça para baixo na forminha
+  'Quindim': () => `<svg class="cake" viewBox="16 38 68 48" aria-hidden="true">
+    <ellipse cx="50" cy="80" rx="31" ry="5.5" fill="#fff" stroke="#EAD9D3" stroke-width="1"/>
+    ${[[33, 60], [67, 60], [50, 72]].map(([x, y]) => `${forminha(x, y + 3, '#E8A0B0')}<path d="M${x - 8} ${y + 3}q0-10 8-10 8 0 8 10z" fill="#F6C43A"/><path d="M${x - 8} ${y + 3}h16" stroke="#E2A62A" stroke-width="1.4"/><ellipse cx="${x - 2.4}" cy="${y - 3}" rx="2.6" ry="1.4" fill="#fff" opacity=".45"/>`).join('')}
+  </svg>`,
+  // Olho de sogra: ameixa recheada de coco, com açúcar cristal
+  'Olho de sogra': () => `<svg class="cake" viewBox="16 38 68 48" aria-hidden="true">
+    <ellipse cx="50" cy="80" rx="31" ry="5.5" fill="#fff" stroke="#EAD9D3" stroke-width="1"/>
+    ${[[33, 58], [67, 58], [50, 71]].map(([x, y]) => `${forminha(x, y + 2, '#C9973A')}<ellipse cx="${x}" cy="${y - 1}" rx="8" ry="6.4" fill="#4A2233"/><path d="M${x - 5.5} ${y - 1}q5.5-5 11 0q-5.5 4-11 0z" fill="#FFF6E2"/><path d="M${x - 3} ${y - 1.4}h1M${x + 1} ${y - 2}h1M${x + 2.4} ${y - .6}h.8" stroke="#E9DCC2" stroke-width=".7" stroke-linecap="round"/><ellipse cx="${x - 3.5}" cy="${y - 4.4}" rx="2" ry="1" fill="#fff" opacity=".25"/>`).join('')}
   </svg>`,
   'Brownie': () => `<svg class="cake" viewBox="13 36 76 50" aria-hidden="true">
     <ellipse cx="51" cy="77" rx="36" ry="6.5" fill="#fff" stroke="#EAD9D3" stroke-width="1"/>
@@ -632,7 +673,7 @@ function multiHtml(cat, key, it) {
 function pickedByCat() {
   return MENU.map(cat => ({ cat, lines: cat.items.flatMap(it => {
     const key = keyOf(cat, it);
-    if (!it.sabores) return state.picked.has(key) ? [{ key, it, label: it.n }] : [];
+    if (!it.sabores) return state.picked.has(key) ? [{ key, it, label: it.rotulo || it.n }] : [];
     const s = it.sabores.filter(f => state.picked.has(key + ':' + f));
     return s.length ? [{ key, it, flavors: s, label: `${it.n} (${s.join(', ')})` }] : [];
   }) })).filter(g => g.lines.length);
@@ -680,8 +721,8 @@ function lineHtml(cat, l) {
   return `<li class="line">
       ${img ? `<div class="thumb">${img}</div>` : ''}
       <div class="line-main">
-        <div class="line-top"><h3 class="line-name">${esc(l.it.n)}</h3><button class="line-del" type="button" data-remove="${k}" aria-label="Tirar ${esc(l.it.n)} do pedido">${TRASH}</button></div>
-        ${chips}${noteHtml}
+        <div class="line-top"><h3 class="line-name">${esc(l.it.rotulo || l.it.n)}</h3><button class="line-del" type="button" data-remove="${k}" aria-label="Tirar ${esc(l.it.n)} do pedido">${TRASH}</button></div>
+        ${GRUPO_NOTA[l.it.g] ? `<p class="line-hint">${esc(GRUPO_NOTA[l.it.g])}</p>` : ''}${chips}${noteHtml}
       </div>
     </li>`;
 }
