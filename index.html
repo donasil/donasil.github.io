@@ -791,9 +791,10 @@ function refreshCart(sel) {
 const cart = $('cart');
 // Rodapé: contato para dúvidas, sem depender do pedido montado
 $('waFoot').href = waLink('Oi Dona Sil! Vi o cardápio e queria tirar uma dúvida.');
-function openCart() { state.noteOpen.clear(); cart.showModal(); renderCart(); $('cartTitle').focus(); }
+function openCart() { state.noteOpen.clear(); cart.showModal(); layerOpened('cart'); renderCart(); $('cartTitle').focus(); }
 $('picked').addEventListener('click', openCart);
 $('cartClose').addEventListener('click', () => cart.close());
+cart.addEventListener('close', () => layerClosed('cart'));
 // Toque fora da folha (no fundo escurecido) também fecha
 cart.addEventListener('click', e => { if (e.target === cart) cart.close(); });
 
@@ -865,8 +866,10 @@ function toPanelTop() {
   if (scrollY > top) scrollTo(0, top);
 }
 
-function show(i) {
+// fromHistory: a troca veio do "voltar" do celular, então não mexe no histórico
+function show(i, fromHistory) {
   state.tab = MENU[i].id; state.filter = 'todos'; render(); $('filters').scrollLeft = 0; toPanelTop();
+  if (!fromHistory) tabHistory(state.tab);
 }
 
 function slide(to, css) {
@@ -876,16 +879,16 @@ function slide(to, css) {
 }
 
 // dir: 1 = próxima página (entra pela direita), -1 = anterior
-function goTo(i, dir) {
+function goTo(i, dir, fromHistory) {
   const cur = tabIndex();
   if (busy || i === cur || i < 0 || i >= MENU.length) { slide('', 'transform .25s ease, opacity .25s'); $('tabs').style.setProperty('--pos', cur); return; }
   dir = dir || (i > cur ? 1 : -1);
   $('tabs').style.setProperty('--pos', i);
-  if (reduceMotion.matches) { slide('', 'none'); show(i); return; }
+  if (reduceMotion.matches) { slide('', 'none'); show(i, fromHistory); return; }
   busy = true;
   slide(`${-dir * 100}%`, 'transform .2s ease-in, opacity .2s ease-in');
   setTimeout(() => {
-    show(i);
+    show(i, fromHistory);
     slide(`${dir * 35}%`, 'none');
     panel.getBoundingClientRect();
     slide('', 'transform .3s cubic-bezier(.2,.8,.2,1), opacity .3s');
@@ -977,7 +980,7 @@ function openViewer(key) {
   showFoto(0, false);
   $('viewerName').textContent = it.n;
   renderViewer();
-  viewer.showModal(); $('viewerTitle').focus();
+  viewer.showModal(); layerOpened('viewer'); $('viewerTitle').focus();
 }
 // Mostra a foto i (dá a volta nas pontas); announce avisa o leitor de tela "Foto 2 de 3"
 function showFoto(i, announce = true) {
@@ -1015,6 +1018,7 @@ $('viewerClose').addEventListener('click', () => viewer.close());
 viewer.addEventListener('click', e => { if (e.target === viewer) viewer.close(); });
 // A lista foi redesenhada por baixo: devolve o foco à foto que abriu
 viewer.addEventListener('close', () => {
+  layerClosed('viewer');
   const el = viewing && $('list').querySelector(`[data-zoom="${CSS.escape(viewing)}"]`);
   if (el && !$('list').contains(document.activeElement)) el.focus({ preventScroll: true });
 });
@@ -1040,6 +1044,37 @@ $('filters').addEventListener('click', e => {
   const b = e.target.closest('[data-filter]'); if (!b) return;
   state.filter = b.dataset.filter; renderFilters(); renderList();
 });
+
+// ---- Voltar do celular ----
+// Bolos é a página inicial. Tortas e Doces, a foto ampliada e o pedido ganham um passo no histórico:
+// o "voltar" fecha a foto ou o pedido, depois volta para Bolos e só então sai do cardápio.
+function tabHistory(id) {
+  const s = history.state || {};
+  if (s.home) { if (id !== MENU[0].id) history.pushState({ tab: id }, ''); }
+  else if (id === MENU[0].id) history.back();
+  else history.replaceState({ tab: id }, '');
+}
+function layerOpened(layer) { history.pushState({ tab: state.tab, layer }, ''); }
+// Fechou pelo X, pelo fundo ou pelo Esc: tira o passo que a abertura pôs
+function layerClosed(layer) { if (history.state && history.state.layer === layer) history.back(); }
+function syncTab() {
+  if (busy) { setTimeout(syncTab, 520); return; }
+  const s = history.state, want = (s && s.tab) || MENU[0].id;
+  if (want !== state.tab) goTo(MENU.findIndex(c => c.id === want), 0, true);
+}
+addEventListener('popstate', () => {
+  const layer = history.state && history.state.layer;
+  if (cart.open && layer !== 'cart') cart.close();
+  if (viewer.open && layer !== 'viewer') viewer.close();
+  syncTab();
+});
+// Ao recarregar a página, continua na aba em que a pessoa estava
+const hs = history.state;
+if (!hs) history.replaceState({ home: true, tab: MENU[0].id }, '');
+else {
+  if (MENU.some(c => c.id === hs.tab)) state.tab = hs.tab;
+  if (hs.layer) history.replaceState({ tab: hs.tab }, '');
+}
 
 load();
 render();
