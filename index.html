@@ -512,6 +512,11 @@ const FOTO = {
   'Frutas vermelhas': 'frutas-vermelhas', 'Nozes': 'nozes', 'Sensação': 'sensacao', 'Abacaxi': 'abacaxi',
   'Limão': 'limao', 'Olho de sogra': 'olho-de-sogra', 'Bolo pão de mel': 'pao-de-mel'
 };
+// Tortas com foto da Dona Sil (as outras continuam com o desenho)
+const FOTO_TORTA = { 'Palmito': 'palmito' };
+// Caminho da foto do sabor, ou '' quando ele não tem foto
+const fotoSrc = (cat, it) => cat.id === 'bolos' && FOTO[it.n] ? `img/bolos/${FOTO[it.n]}.webp`
+  : cat.id === 'tortas' && FOTO_TORTA[it.n] ? `img/tortas/${FOTO_TORTA[it.n]}.webp` : '';
 // f: recheio, t: enfeites, drizzle: fios por cima, seeds: sementes
 const TORTA = {
   'Banoffee': { f: '#C98A4E', t: ['banana', 'chantilly', 'banana', 'chantilly', 'canela'] },
@@ -611,14 +616,15 @@ const DOCE = {
   </svg>`
 };
 
-// Imagem de cada sabor: foto do bolo, desenho da torta ou do doce
+// Imagem de cada sabor: foto do bolo ou da torta, desenho da torta ou do doce
 function artHtml(cat, it) {
-  if (cat.id === 'bolos' && FOTO[it.n]) return `<img src="img/bolos/${FOTO[it.n]}.webp" alt="" loading="lazy" width="256" height="256">`;
+  const src = fotoSrc(cat, it);
+  if (src) return `<img src="${src}" alt="" loading="lazy" width="256" height="256">`;
   if (cat.id === 'tortas' && TORTA[it.n]) return tortaSvg(TORTA[it.n]);
   if (cat.id === 'doces' && DOCE[it.n]) return DOCE[it.n]();
   return '';
 }
-const ART_NOTE = { bolos: 'Fotos de bolos da Dona Sil — a decoração varia a cada encomenda.', tortas: 'Imagens ilustrativas.', doces: 'Imagens ilustrativas.' };
+const ART_NOTE = { bolos: 'Fotos de bolos da Dona Sil — a decoração varia a cada encomenda.', tortas: 'Fotos da Dona Sil e imagens ilustrativas.', doces: 'Imagens ilustrativas.' };
 
 const PICK_ICONS = '<svg class="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><svg class="check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 // Sabores dos doces: a linha inteira é o botão, o + é só desenho
@@ -630,9 +636,11 @@ const pickLabel = (cat, it, on) => on ? `Tirar ${spoken(cat, it)} do pedido` : `
 // Bolos, tortas e doces: só o + escolhe ou tira
 const pickBtn = (cat, it, key, on) =>
   `<button class="pick" type="button" aria-pressed="${on}" aria-label="${esc(pickLabel(cat, it, on))}" data-key="${esc(key)}">${PICK_ICONS}</button>`;
-// Foto do bolo: tocar amplia
-const zoomHtml = (cat, it, key, img) => cat.id === 'bolos' && FOTO[it.n]
-  ? `<button class="zoom" type="button" aria-label="Ampliar foto do ${esc(spoken(cat, it))}" data-zoom="${esc(key)}">${img}</button>` : img;
+// Foto do bolo ou da torta: tocar amplia
+// "da torta Palmito", "do bolo Nutella"
+const daSabor = (cat, it) => (cat.id === 'tortas' ? 'da ' : 'do ') + spoken(cat, it);
+const zoomHtml = (cat, it, key, img) => fotoSrc(cat, it)
+  ? `<button class="zoom" type="button" aria-label="Ampliar foto ${esc(daSabor(cat, it))}" data-zoom="${esc(key)}">${img}</button>` : img;
 const CHEV = '<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
 const keyOf = (cat, it) => cat.id + ':' + it.n;
 
@@ -926,13 +934,13 @@ function renderViewer() {
 function openViewer(key) {
   const cat = MENU.find(c => c.id === key.slice(0, key.indexOf(':')));
   const it = cat && cat.items.find(i => keyOf(cat, i) === key);
-  if (!it || !FOTO[it.n]) return;
+  if (!it || !fotoSrc(cat, it)) return;
   viewing = key;
   const img = $('viewerImg');
   // Fotos pequenas: no máximo o dobro do tamanho natural, para não borrar
   img.onload = () => { img.style.maxWidth = img.naturalWidth * 2 + 'px'; };
-  img.src = `img/bolos/${FOTO[it.n]}.webp`;
-  img.alt = 'Foto do ' + spoken(cat, it);
+  img.src = fotoSrc(cat, it);
+  img.alt = 'Foto ' + daSabor(cat, it);
   $('viewerName').textContent = it.n;
   renderViewer();
   viewer.showModal(); $('viewerTitle').focus();
