@@ -228,8 +228,19 @@ html:has(.cart[open]){overflow:hidden}
 .cart-foot p{margin:0 0 10px;text-align:center;font-size:12.5px;color:var(--muted)}
 
 /* Foto ampliada do bolo: mesma folha do carrinho */
-.viewer-body{display:flex;justify-content:center;padding:16px 16px 6px}
-.viewer-img{display:block;width:min(100%,56vh);width:min(100%,56dvh);height:auto;aspect-ratio:1;object-fit:cover;border-radius:20px;background:#fff;box-shadow:0 0 0 3px #fff,0 8px 22px rgba(58,40,36,.18)}
+.viewer-body{display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 16px 6px}
+.viewer-photo{position:relative;width:min(100%,56vh);width:min(100%,56dvh);touch-action:pan-y}
+.viewer-img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:20px;background:#fff;box-shadow:0 0 0 3px #fff,0 8px 22px rgba(58,40,36,.18)}
+/* Várias fotos: setas nos lados, bolinhas embaixo e deslizar para os lados */
+.viewer-nav{position:absolute;top:50%;width:44px;height:44px;margin-top:-22px;border:0;border-radius:50%;background:rgba(255,255,255,.88);color:var(--rose);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(58,40,36,.2)}
+.viewer-nav[hidden]{display:none}
+.viewer-nav.prev{left:8px}
+.viewer-nav.next{right:8px}
+.viewer-nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.viewer-dots{display:flex;gap:8px;min-height:8px}
+.viewer-dots i{width:8px;height:8px;border-radius:50%;background:var(--chip)}
+.viewer-dots i.on{background:var(--rose)}
+.fotos-n{position:absolute;right:4px;bottom:4px;padding:1px 6px;border-radius:999px;background:rgba(58,40,36,.62);color:#fff;font:600 10px/1.5 Figtree,sans-serif}
 .viewer .cart-head h2 small{font-family:Caveat,cursive;font-size:20px;font-weight:700;color:var(--rose)}
 
 /* Abertura carinhosa */
@@ -364,7 +375,15 @@ html:has(.cart[open]){overflow:hidden}
     <h2 id="viewerTitle" tabindex="-1"><span id="viewerName"></span><small>a decoração varia a cada encomenda</small></h2>
     <button class="cart-close" type="button" id="viewerClose" aria-label="Fechar foto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
-  <div class="viewer-body"><img class="viewer-img" id="viewerImg" alt="" width="320" height="320"></div>
+  <div class="viewer-body">
+    <div class="viewer-photo" id="viewerPhoto">
+      <img class="viewer-img" id="viewerImg" alt="" width="320" height="320">
+      <button class="viewer-nav prev" type="button" id="viewerPrev" aria-label="Foto anterior" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button class="viewer-nav next" type="button" id="viewerNext" aria-label="Próxima foto" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div class="viewer-dots" id="viewerDots" aria-hidden="true"></div>
+    <span class="sr-only" id="viewerCount" aria-live="polite"></span>
+  </div>
   <div class="cart-foot">
     <button class="btn" id="viewerPick" type="button"></button>
   </div>
@@ -512,11 +531,15 @@ const FOTO = {
   'Frutas vermelhas': 'frutas-vermelhas', 'Nozes': 'nozes', 'Sensação': 'sensacao', 'Abacaxi': 'abacaxi',
   'Limão': 'limao', 'Olho de sogra': 'olho-de-sogra', 'Bolo pão de mel': 'pao-de-mel'
 };
-// Tortas com foto da Dona Sil (as outras continuam com o desenho)
-const FOTO_TORTA = { 'Palmito': 'palmito' };
-// Caminho da foto do sabor, ou '' quando ele não tem foto
-const fotoSrc = (cat, it) => cat.id === 'bolos' && FOTO[it.n] ? `img/bolos/${FOTO[it.n]}.webp`
-  : cat.id === 'tortas' && FOTO_TORTA[it.n] ? `img/tortas/${FOTO_TORTA[it.n]}.webp` : '';
+// Tortas com foto da Dona Sil (as outras continuam com o desenho).
+// Com várias fotos, use uma lista: a primeira vai no cartão e todas aparecem na foto ampliada.
+const FOTO_TORTA = { 'Palmito': ['palmito', 'palmito-recheio'] };
+// Fotos do sabor, na ordem; [] quando ele não tem foto
+const fotosDe = (cat, it) => {
+  const f = cat.id === 'bolos' ? FOTO[it.n] : cat.id === 'tortas' ? FOTO_TORTA[it.n] : null;
+  return f ? [].concat(f).map(n => `img/${cat.id}/${n}.webp`) : [];
+};
+const fotoSrc = (cat, it) => fotosDe(cat, it)[0] || '';
 // f: recheio, t: enfeites, drizzle: fios por cima, seeds: sementes
 const TORTA = {
   'Banoffee': { f: '#C98A4E', t: ['banana', 'chantilly', 'banana', 'chantilly', 'canela'] },
@@ -639,8 +662,14 @@ const pickBtn = (cat, it, key, on) =>
 // Foto do bolo ou da torta: tocar amplia
 // "da torta Palmito", "do bolo Nutella"
 const daSabor = (cat, it) => (cat.id === 'tortas' ? 'da ' : 'do ') + spoken(cat, it);
-const zoomHtml = (cat, it, key, img) => fotoSrc(cat, it)
-  ? `<button class="zoom" type="button" aria-label="Ampliar foto ${esc(daSabor(cat, it))}" data-zoom="${esc(key)}">${img}</button>` : img;
+// Com mais de uma foto, o cartão avisa quantas são
+const zoomHtml = (cat, it, key, img) => {
+  const n = fotosDe(cat, it).length;
+  if (!n) return img;
+  const label = n > 1 ? `Ver as ${n} fotos ${daSabor(cat, it)}` : `Ampliar foto ${daSabor(cat, it)}`;
+  const badge = n > 1 ? `<span class="fotos-n" aria-hidden="true">${n} fotos</span>` : '';
+  return `<button class="zoom" type="button" aria-label="${esc(label)}" data-zoom="${esc(key)}">${img}${badge}</button>`;
+};
 const CHEV = '<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
 const keyOf = (cat, it) => cat.id + ':' + it.n;
 
@@ -926,6 +955,8 @@ function togglePick(el) {
 // ---- Foto ampliada do bolo ----
 const viewer = $('viewer');
 let viewing = null;
+// Fotos do sabor aberto, qual está à mostra e o texto alternativo base
+let viewFotos = [], viewIdx = 0, viewAlt = '';
 function renderViewer() {
   const on = state.picked.has(viewing);
   $('viewerPick').textContent = on ? 'Tirar do pedido' : 'Escolher este sabor';
@@ -936,15 +967,46 @@ function openViewer(key) {
   const it = cat && cat.items.find(i => keyOf(cat, i) === key);
   if (!it || !fotoSrc(cat, it)) return;
   viewing = key;
-  const img = $('viewerImg');
-  // Fotos pequenas: no máximo o dobro do tamanho natural, para não borrar
-  img.onload = () => { img.style.maxWidth = img.naturalWidth * 2 + 'px'; };
-  img.src = fotoSrc(cat, it);
-  img.alt = 'Foto ' + daSabor(cat, it);
+  viewFotos = fotosDe(cat, it);
+  viewAlt = 'Foto ' + daSabor(cat, it);
+  const many = viewFotos.length > 1;
+  $('viewerPrev').hidden = $('viewerNext').hidden = !many;
+  $('viewerDots').innerHTML = many ? viewFotos.map(() => '<i></i>').join('') : '';
+  // Já carrega as outras fotos, para trocar sem espera
+  viewFotos.slice(1).forEach(src => { new Image().src = src; });
+  showFoto(0, false);
   $('viewerName').textContent = it.n;
   renderViewer();
   viewer.showModal(); $('viewerTitle').focus();
 }
+// Mostra a foto i (dá a volta nas pontas); announce avisa o leitor de tela "Foto 2 de 3"
+function showFoto(i, announce = true) {
+  const n = viewFotos.length, img = $('viewerImg');
+  viewIdx = (i + n) % n;
+  // Fotos pequenas: no máximo o dobro do tamanho natural, para não borrar
+  img.onload = () => { $('viewerPhoto').style.maxWidth = img.naturalWidth * 2 + 'px'; };
+  img.src = viewFotos[viewIdx];
+  img.alt = n > 1 ? `${viewAlt}, ${viewIdx + 1} de ${n}` : viewAlt;
+  [...$('viewerDots').children].forEach((d, k) => d.classList.toggle('on', k === viewIdx));
+  $('viewerCount').textContent = announce && n > 1 ? `Foto ${viewIdx + 1} de ${n}` : '';
+}
+$('viewerPrev').addEventListener('click', () => showFoto(viewIdx - 1));
+$('viewerNext').addEventListener('click', () => showFoto(viewIdx + 1));
+viewer.addEventListener('keydown', e => {
+  if (viewFotos.length < 2 || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+  e.preventDefault(); showFoto(viewIdx + (e.key === 'ArrowRight' ? 1 : -1));
+});
+// Deslizar a foto para os lados troca de foto
+let fotoTouch = null;
+$('viewerPhoto').addEventListener('touchstart', e => {
+  fotoTouch = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null;
+}, { passive: true });
+$('viewerPhoto').addEventListener('touchend', e => {
+  if (!fotoTouch || viewFotos.length < 2) return;
+  const t = e.changedTouches[0], dx = t.clientX - fotoTouch.x, dy = t.clientY - fotoTouch.y;
+  fotoTouch = null;
+  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) showFoto(viewIdx + (dx < 0 ? 1 : -1));
+}, { passive: true });
 $('viewerPick').addEventListener('click', () => {
   if (!state.picked.delete(viewing)) state.picked.add(viewing);
   renderList(); renderCta(); renderViewer();
