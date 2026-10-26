@@ -398,30 +398,21 @@ html:has(.cart[open]){overflow:hidden}
 // rotulo: nome usado no pedido e na mensagem do WhatsApp quando o nome sozinho fica ambíguo (ex.: tortas salgadas).
 const MENU = [
   { id: 'bolos', name: 'Bolos', note: 'escolha o seu sabor preferido', items: [
-    { n: 'Dona Sil', tag: 'sig', massa: 'Chocolate', m: 'Chocolate', r: 'Mousse de chocolate meio amargo e creme com pedaços de morango', c: 'Chantilly com ganache de chocolate meio amargo' },
-    { n: 'Crepe de chocolate', tag: 'new', massa: 'Especial', m: 'Discos de crepe sabor chocolate', r: 'Mousse de chocolate meio amargo e mousse de chocolate branco', c: 'Mousse de chocolate meio amargo com confeitos' },
-    { n: 'Leite Ninho com uva verde', tag: 'new', massa: 'Branca', m: 'Branca', r: 'Leite Ninho com pedaços de uva verde', c: 'Chantilly' },
-    { n: 'Nutella', massa: 'Chocolate', m: 'Chocolate', r: '3 camadas: creme de Nutella, creme de avelã e mousse de chocolate meio amargo', c: 'Ganache de chocolate meio amargo' },
-    { n: 'Chocolatudo da Sil', massa: 'Chocolate', m: 'Chocolate', r: '3 camadas: creme de chocolate com pedaços de morango, mousse de chocolate meio amargo e uma leve camada de brigadeiro', c: 'Ganache de chocolate meio amargo' },
+    { n: 'Dona Sil (massa branca)', tag: 'sig', massa: 'Branca', m: 'Branca', r: 'Creme pâtissier com pedaços de morango e mousse de chocolate branco', c: 'Ganache de chocolate branco' },
+    { n: 'Dona Sil (massa de chocolate)', tag: 'sig', massa: 'Chocolate', m: 'Chocolate', r: 'Creme pâtissier com pedaços de morango e mousse de chocolate meio amargo', c: 'Ganache de chocolate meio amargo' },
+    { n: 'Tropical de abacaxi', massa: 'Branca', m: 'Branca', r: 'Duo de creme pâtissier e compota de abacaxi', c: 'Véu de chantilly' },
+    { n: 'Mousse de chocolate meio amargo', massa: 'Chocolate', m: 'Chocolate', r: 'Mousse de chocolate meio amargo', c: 'Uma leve camada de chantilly e ganache de chocolate meio amargo' },
+    { n: 'Chuva de Brigadeiro', massa: 'Chocolate', m: 'Chocolate', r: 'Brigadeiro cremoso', c: 'Brigadeiro super cremoso com chuva de granulado de brigadeiro' },
+    { n: 'Suave de Pêssego', massa: 'Branca', m: 'Branca', r: 'Camadas de creme pâtissier com pêssegos e mousse de chocolate branco', c: 'Chantilly' },
+    { n: 'Frutas vermelhas', massa: 'Branca', m: 'Branca', r: 'Cremoso de frutas vermelhas', c: 'Nuvem de chantilly com frutas vermelhas' },
+    { n: 'Delícia Prestígio', massa: 'Chocolate', m: 'Chocolate', r: 'Coco cremoso', c: 'Ganache de chocolate, densa e brilhante' },
+    { n: 'Carinhoso de Nutella', massa: 'Chocolate', m: 'Chocolate', r: 'Creme de avelã e mousse de chocolate ao leite', c: 'Ganache de chocolate meio amargo' },
+    { n: 'Ninho com uva verde', tag: 'new', massa: 'Branca', m: 'Branca', r: 'Creme de leite Ninho com pedaços de uva verde', c: 'Chantilly' },
+    { n: 'Ninho com morango', massa: 'Branca', m: 'Branca', r: 'Creme de leite Ninho com pedaços de morango', c: 'Chantilly' },
+    { n: 'Nozes', massa: 'Branca', m: 'Branca', r: 'Estrogonofe de nozes', c: 'Chantilly' },
+    { n: 'Iogurte com Blueberry', massa: 'Especial', m: 'Iogurte', r: 'Cream cheese, mascarpone e limão siciliano', c: 'Cream cheese, mascarpone e limão siciliano' },
     { n: 'Chiffon de matchá', massa: 'Especial', m: 'Sabor matchá', rc: 'Mousse de matchá e nata com uvas verdes e nectarinas' },
-    { n: 'Iogurte, blueberries e limão siciliano', massa: 'Especial', m: 'Iogurte', rc: 'Cream cheese, mascarpone, blueberries e limão siciliano' },
-    { n: 'Leite Ninho com morangos', massa: 'Branca', m: 'Branca', r: 'Leite Ninho com pedaços de morango', c: 'Chantilly' },
-    { n: 'Crocante', massa: 'Branca', m: 'Branca', r: 'Creme de Leite Ninho com crocante', c: 'Chantilly' },
-    { n: 'Brigadeiro', massa: 'Chocolate', m: 'Chocolate', r: 'Brigadeiro e creme de chocolate', c: 'Chantilly de chocolate' },
-    { n: 'Brigadeiro com granulado', c: 'Brigadeiro cremoso, finalizado com chuva de granulado' },
-    { n: 'Delícia Prestígio', r: 'Coco cremoso', c: 'Ganache de chocolate, densa e brilhante' },
-    { n: 'Mousse de chocolate meio amargo', r: 'Mousse de chocolate meio amargo' },
-    { n: 'Leite condensado com morangos', massa: 'Branca', m: 'Branca', r: 'Leite condensado com pedaços de morango e mousse de chocolate branco', c: 'Mousse de chocolate branco' },
-    { n: 'Frutas vermelhas', massa: 'Branca', m: 'Branca', r: 'Cremoso com frutas vermelhas', c: 'Nuvem de chantilly com frutas vermelhas' },
-    { n: 'Pêssego', r: 'Camadas de creme pâtissier com pêssego e mousse de chocolate branco', c: 'Chantilly' },
-    { n: 'Nozes', massa: 'Branca', m: 'Branca', r: 'Strogonoff de nozes e doce de leite', c: 'Chantilly' },
-    { n: 'Sensação', massa: 'Chocolate', m: 'Chocolate', r: 'Creme de morango com pedaços de morango', c: 'Ganache de chocolate meio amargo' },
-    { n: 'Abacaxi', massa: 'Branca', m: 'Branca', r: 'Creme com doce de abacaxi', c: 'Chantilly' },
-    { n: 'Abacaxi com coco' },
-    { n: 'Tropical de abacaxi', r: 'Duo de creme pâtissier e compota de abacaxi', c: 'Véu de chantilly' },
-    { n: 'Limão', massa: 'Branca', m: 'Branca', r: 'Mousse de limão com ganache de limão', c: 'Chantilly' },
-    { n: 'Olho de sogra', massa: 'Branca', m: 'Branca', r: 'Doce de leite com ameixa e beijinho', c: 'Chantilly' },
-    { n: 'Bolo pão de mel', massa: 'Chocolate', m: 'Chocolate, mel e especiarias', r: 'Doce de leite', c: 'Ganache de chocolate' }
+    { n: 'Crepe de chocolate', tag: 'new', massa: 'Especial', m: 'Discos de crepe sabor chocolate', r: 'Mousse de chocolate meio amargo e mousse de chocolate branco', c: 'Mousse de chocolate meio amargo com confeitos' }
   ]},
   { id: 'tortas', name: 'Tortas', note: 'doces e salgadas, pra qualquer encontro', items: [
     { g: 'Tortas doces', n: 'Banoffee' }, { g: 'Tortas doces', n: 'Café' }, { g: 'Tortas doces', n: 'Três chocolates' }, { g: 'Tortas doces', n: 'Nutella' },
@@ -504,7 +495,9 @@ function renderList() {
   $('note').textContent = cat.note;
   $('list').classList.toggle('compact', cat.id !== 'bolos');
   // Na visão "Todos" dos bolos: assinatura em destaque, depois novidades e clássicos
-  const grouped = cat.id === 'bolos' && state.filter === 'todos';
+  // (só quando a lista segue essa ordem; se as novidades estiverem no meio dos clássicos, sem títulos)
+  const rank = it => it.tag === 'sig' ? 0 : it.tag === 'new' ? 1 : 2;
+  const grouped = cat.id === 'bolos' && state.filter === 'todos' && items.every((it, i) => !i || rank(items[i - 1]) <= rank(it));
   let html = '';
   items.forEach((it, i) => {
     const prev = items[i - 1];
@@ -524,12 +517,10 @@ function renderList() {
 // Bolos: fotos de bolos da Dona Sil (do Instagram), escolhidas pelo jeito do sabor;
 // a decoração varia a cada encomenda. Tortas e doces: desenhos até termos fotos.
 const FOTO = {
-  'Dona Sil': 'dona-sil', 'Crepe de chocolate': 'crepe-de-chocolate', 'Leite Ninho com uva verde': 'ninho-uva-verde',
-  'Nutella': 'nutella', 'Chocolatudo da Sil': 'chocolatudo', 'Chiffon de matchá': 'chiffon-matcha',
-  'Iogurte, blueberries e limão siciliano': 'iogurte-blueberries', 'Leite Ninho com morangos': 'ninho-morangos',
-  'Crocante': 'crocante', 'Brigadeiro': 'brigadeiro', 'Leite condensado com morangos': 'condensado-morangos',
-  'Frutas vermelhas': 'frutas-vermelhas', 'Nozes': 'nozes', 'Sensação': 'sensacao', 'Abacaxi': 'abacaxi',
-  'Limão': 'limao', 'Olho de sogra': 'olho-de-sogra', 'Bolo pão de mel': 'pao-de-mel'
+  'Dona Sil (massa de chocolate)': 'dona-sil', 'Crepe de chocolate': 'crepe-de-chocolate', 'Ninho com uva verde': 'ninho-uva-verde',
+  'Carinhoso de Nutella': 'nutella', 'Chiffon de matchá': 'chiffon-matcha',
+  'Iogurte com Blueberry': 'iogurte-blueberries', 'Ninho com morango': 'ninho-morangos',
+  'Frutas vermelhas': 'frutas-vermelhas', 'Nozes': 'nozes'
 };
 // Tortas com foto da Dona Sil (as outras continuam com o desenho).
 // Com várias fotos, use uma lista: a primeira vai no cartão e todas aparecem na foto ampliada.
