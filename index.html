@@ -519,19 +519,22 @@ function renderList() {
 
 // ---- Imagens dos sabores ----
 // Bolos: fotos de bolos da Dona Sil (do Instagram), escolhidas pelo jeito do sabor;
-// a decoração varia a cada encomenda. Tortas e doces: desenhos até termos fotos.
+// a decoração varia a cada encomenda. Tortas e doces: desenhos, menos os que já têm foto.
 const FOTO = {
   'Dona Sil (massa de chocolate)': 'dona-sil', 'Crepe de chocolate': 'crepe-de-chocolate', 'Ninho com uva verde': 'ninho-uva-verde',
   'Carinhoso de Nutella': 'nutella', 'Chiffon de matchá': 'chiffon-matcha',
   'Iogurte com Blueberry': 'iogurte-blueberries', 'Ninho com morango': 'ninho-morangos',
-  'Frutas vermelhas': 'frutas-vermelhas', 'Nozes': 'nozes'
+  'Frutas vermelhas': 'frutas-vermelhas', 'Nozes': 'nozes',
+  'Tropical de abacaxi': 'abacaxi', 'Chuva de Brigadeiro': 'brigadeiro'
 };
 // Tortas com foto da Dona Sil (as outras continuam com o desenho).
 // Com várias fotos, use uma lista: a primeira vai no cartão e todas aparecem na foto ampliada.
 const FOTO_TORTA = { 'Palmito': ['palmito', 'palmito-recheio'] };
+// Doces com foto da Dona Sil (os outros continuam com o desenho). Doce com sabores: a foto não amplia, porque tocar na linha abre os sabores.
+const FOTO_DOCE = { 'Pão de mel': 'pao-de-mel' };
 // Fotos do sabor, na ordem; [] quando ele não tem foto
 const fotosDe = (cat, it) => {
-  const f = cat.id === 'bolos' ? FOTO[it.n] : cat.id === 'tortas' ? FOTO_TORTA[it.n] : null;
+  const f = cat.id === 'bolos' ? FOTO[it.n] : cat.id === 'tortas' ? FOTO_TORTA[it.n] : cat.id === 'doces' ? FOTO_DOCE[it.n] : null;
   return f ? [].concat(f).map(n => `img/${cat.id}/${n}.webp`) : [];
 };
 const fotoSrc = (cat, it) => fotosDe(cat, it)[0] || '';
@@ -642,7 +645,7 @@ function artHtml(cat, it) {
   if (cat.id === 'doces' && DOCE[it.n]) return DOCE[it.n]();
   return '';
 }
-const ART_NOTE = { bolos: 'Fotos de bolos da Dona Sil — a decoração varia a cada encomenda.', tortas: 'Fotos da Dona Sil e imagens ilustrativas.', doces: 'Imagens ilustrativas.' };
+const ART_NOTE = { bolos: 'Fotos de bolos da Dona Sil — a decoração varia a cada encomenda.', tortas: 'Fotos da Dona Sil e imagens ilustrativas.', doces: 'Fotos da Dona Sil e imagens ilustrativas.' };
 
 const PICK_ICONS = '<svg class="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><svg class="check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 // Sabores dos doces: a linha inteira é o botão, o + é só desenho
