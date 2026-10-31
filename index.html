@@ -122,6 +122,8 @@ button.pick::before{content:"";position:absolute;inset:-6px;border-radius:50%}
 /* Selos (mesmo formato do cardápio do Canva) */
 .seal{flex:none;width:48px;height:48px;filter:drop-shadow(0 2px 3px rgba(138,100,32,.25))}
 .seal text{font:700 25px 'Mountains of Christmas',Figtree,serif;fill:#fff;paint-order:stroke;stroke:#9A6E22;stroke-width:1.4px;stroke-linejoin:round}
+.top-seal{display:inline-block;margin:7px 0 0;padding:3px 10px;border-radius:999px;background:var(--gold-bg);border:1px solid var(--gold);color:#7A5618;font:700 12px/1.3 Figtree,sans-serif;letter-spacing:.02em}
+.hero .top-seal{position:relative;z-index:1}
 .ribbon{display:block;height:38px;width:auto;margin:0 0 10px -6px;filter:drop-shadow(0 2px 3px rgba(142,51,73,.25))}
 .ribbon text{font:700 14px 'Mountains of Christmas',Figtree,serif;letter-spacing:.9px;fill:#fff}
 
@@ -393,20 +395,21 @@ html:has(.cart[open]){overflow:hidden}
 // Conteúdo do cardápio — fonte: Canva "Cardápio Dona Sil - OUT/25".
 // Para atualizar, edite só esta lista.
 // tag: 'new' marca novidade (ficam no topo dos bolos, logo depois do assinatura);
+// top: true põe o selo "Mais vendido" no bolo (não muda a ordem nem o grupo; vale junto com a tag);
 // sabores: [...] faz o item abrir e fechar, com cada sabor escolhido separado.
 // g: grupo dentro da aba (tortas doces/salgadas, docinhos gourmet/outros doces); o aviso do grupo fica em GRUPO_NOTA.
 // rotulo: nome usado no pedido e na mensagem do WhatsApp quando o nome sozinho fica ambíguo (ex.: tortas salgadas).
 const MENU = [
   { id: 'bolos', name: 'Bolos', note: 'escolha o seu sabor preferido', items: [
-    { n: 'Dona Sil (massa branca)', tag: 'sig', massa: 'Branca', m: 'Branca', r: 'Creme pâtissier com pedaços de morango e mousse de chocolate branco', c: 'Ganache de chocolate branco' },
-    { n: 'Dona Sil (massa de chocolate)', tag: 'sig', massa: 'Chocolate', m: 'Chocolate', r: 'Creme pâtissier com pedaços de morango e mousse de chocolate meio amargo', c: 'Ganache de chocolate meio amargo' },
+    { n: 'Dona Sil (massa branca)', tag: 'sig', top: true, massa: 'Branca', m: 'Branca', r: 'Creme pâtissier com pedaços de morango e mousse de chocolate branco', c: 'Ganache de chocolate branco' },
+    { n: 'Dona Sil (massa de chocolate)', tag: 'sig', top: true, massa: 'Chocolate', m: 'Chocolate', r: 'Creme pâtissier com pedaços de morango e mousse de chocolate meio amargo', c: 'Ganache de chocolate meio amargo' },
     { n: 'Tropical de abacaxi', massa: 'Branca', m: 'Branca', r: 'Duo de creme pâtissier e compota de abacaxi', c: 'Véu de chantilly' },
-    { n: 'Mousse de chocolate meio amargo', massa: 'Chocolate', m: 'Chocolate', r: 'Mousse de chocolate meio amargo', c: 'Uma leve camada de chantilly e ganache de chocolate meio amargo' },
+    { n: 'Mousse de chocolate meio amargo', top: true, massa: 'Chocolate', m: 'Chocolate', r: 'Mousse de chocolate meio amargo', c: 'Uma leve camada de chantilly e ganache de chocolate meio amargo' },
     { n: 'Chuva de Brigadeiro', massa: 'Chocolate', m: 'Chocolate', r: 'Brigadeiro cremoso', c: 'Brigadeiro super cremoso com chuva de granulado de brigadeiro' },
     { n: 'Suave de Pêssego', massa: 'Branca', m: 'Branca', r: 'Camadas de creme pâtissier com pêssegos e mousse de chocolate branco', c: 'Chantilly' },
     { n: 'Frutas vermelhas', massa: 'Branca', m: 'Branca', r: 'Cremoso de frutas vermelhas', c: 'Nuvem de chantilly com frutas vermelhas' },
     { n: 'Delícia Prestígio', massa: 'Chocolate', m: 'Chocolate', r: 'Coco cremoso', c: 'Ganache de chocolate, densa e brilhante' },
-    { n: 'Carinhoso de Nutella', massa: 'Chocolate', m: 'Chocolate', r: 'Creme de avelã e mousse de chocolate ao leite', c: 'Ganache de chocolate meio amargo' },
+    { n: 'Carinhoso de Nutella', top: true, massa: 'Chocolate', m: 'Chocolate', r: 'Creme de avelã e mousse de chocolate ao leite', c: 'Ganache de chocolate meio amargo' },
     { n: 'Ninho com uva verde', tag: 'new', massa: 'Branca', m: 'Branca', r: 'Creme de leite Ninho com pedaços de uva verde', c: 'Chantilly' },
     { n: 'Ninho com morango', massa: 'Branca', m: 'Branca', r: 'Creme de leite Ninho com pedaços de morango', c: 'Chantilly' },
     { n: 'Nozes', massa: 'Branca', m: 'Branca', r: 'Estrogonofe de nozes', c: 'Chantilly' },
@@ -425,7 +428,7 @@ const MENU = [
     { g: 'Docinhos gourmet', n: 'Brigadeiros gourmet', sabores: ['Tradicional', 'Beijinho', 'Leite Ninho', 'Nutella', 'Bicho de pé'] },
     { g: 'Docinhos gourmet', n: 'Quindim' },
     { g: 'Docinhos gourmet', n: 'Olho de sogra' },
-    { g: 'Outros doces', n: 'Pão de mel' },
+    { g: 'Outros doces', n: 'Pão de mel', sabores: ['Doce de leite', 'Prestígio', 'Maracujá', 'Brigadeiro', 'Creme de avelã', 'Sensação de Morango'] },
     { g: 'Outros doces', n: 'Brownie' }
   ]}
 ];
@@ -451,6 +454,7 @@ const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;'
 // Selo dourado de novidade, no mesmo formato do cardápio do Canva
 const SEAL_NEW = '<svg class="seal" viewBox="0 0 100 100" role="img" aria-label="Novidade"><use href="#scallop" fill="url(#gGold)"/><ellipse cx="36" cy="27" rx="16" ry="6" fill="#fff" opacity=".22" transform="rotate(-30 38 30)"/><circle cx="50" cy="50" r="31" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1.8" stroke-dasharray="3.2 3.2"/><text x="50" y="57.5" text-anchor="middle">NOVO</text></svg>';
 // Roseta + fita do bolo assinatura
+const SEAL_TOP = '<span class="top-seal">Mais vendido</span>';
 const RIBBON_SIG = '<svg class="ribbon" viewBox="0 0 150 40" role="img" aria-label="Bolo assinatura"><path d="M30 9h118l-8 11 8 11H30z" fill="url(#gRose)"/><path d="M30 9h118l-8 11 8 11H30z" fill="none" stroke="#fff" stroke-opacity=".6" stroke-dasharray="2.5 2.5" transform="translate(3 3) scale(.96 .85)"/><text x="89" y="25.2" text-anchor="middle">ASSINATURA</text><use href="#scallop" x="0" y="0" width="40" height="40" fill="url(#gRose)"/><circle cx="20" cy="20" r="12.4" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width=".9" stroke-dasharray="1.6 1.6"/><use href="#heart" x="12.5" y="12.8" width="15" height="15" color="#fff"/></svg>';
 
 function renderTabs() {
@@ -674,11 +678,11 @@ function itemHtml(cat, it) {
     return `<li class="hero${on ? ' on' : ''}">
       ${pick}${RIBBON_SIG}
       <p class="kicker">o bolo que leva o meu nome</p>
-      <div class="hero-top"><h3 class="name">${esc(it.n)}</h3>${img ? `<div class="thumb">${img}</div>` : ''}</div>${spec(it)}
+      <div class="hero-top"><h3 class="name">${esc(it.n)}</h3>${img ? `<div class="thumb">${img}</div>` : ''}</div>${it.top ? SEAL_TOP : ''}${spec(it)}
     </li>`;
   }
   return `<li class="item${it.tag === 'new' ? ' card' : ''}${on ? ' on' : ''}">
-      ${pick}<div class="body"><div class="title">${art}<h3 class="name">${esc(it.n)}</h3></div>${spec(it)}</div>
+      ${pick}<div class="body"><div class="title">${art}<h3 class="name">${esc(it.n)}</h3></div>${it.top ? SEAL_TOP : ''}${spec(it)}</div>
     </li>`;
 }
 
